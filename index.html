@@ -168,6 +168,7 @@
     .grid .card:nth-child(4) { animation-delay: 0.51s; }
     .grid .card:nth-child(5) { animation-delay: 0.58s; }
     .grid .card:nth-child(6) { animation-delay: 0.65s; }
+    .grid .card:nth-child(7) { animation-delay: 0.72s; }
 
     .card.is-tilting {
       box-shadow: var(--shadow-hover);
@@ -348,6 +349,11 @@
     .card[data-char="trace"]  .char-avatar { background: linear-gradient(150deg,#1e2a3e,#6a7ba0); }
     .card[data-char="trace"]  .char-name, .card[data-char="trace"] .tool-label { color:#1e2a3e; }
 
+    .card[data-char="echo"]   { color: #0d6b8a; }
+    .card[data-char="echo"]   .char-stage { background: linear-gradient(150deg,#dff1fb 0%,#eaf6f1 100%); }
+    .card[data-char="echo"]   .char-avatar { background: linear-gradient(150deg,#1488b0,#41B9FF); }
+    .card[data-char="echo"]   .char-name, .card[data-char="echo"] .tool-label { color:#0d6b8a; }
+
     /* ════════ CHARACTER IDLE + HOVER ANIMATIONS ════════ */
     /* Atlas — compass needle: gentle idle sway, strong on hover */
     #compass-needle { transform-origin: 27px 27px; animation: compass-idle 6s ease-in-out infinite; }
@@ -389,6 +395,10 @@
     .card[data-char="trace"].is-tilting .t-node:nth-of-type(3){ animation-duration:1.1s; }
     .card[data-char="trace"].is-tilting .t-node:nth-of-type(4){ animation-duration:1.1s; }
     @keyframes node-glow { 0%,100%{opacity:1} 50%{opacity:0.35} }
+
+    #echo-star { transform-origin: 27px 26px; }
+    .card[data-char="echo"].is-tilting #echo-star { animation: echo-pulse 1.1s ease-in-out infinite; }
+    @keyframes echo-pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.18);opacity:0.75} }
 
     /* ════════ SHARED KEYFRAMES ════════ */
     @keyframes float { 0%,100%{transform:translateZ(40px) translateY(0)} 50%{transform:translateZ(40px) translateY(-8px)} }
@@ -641,6 +651,29 @@
           <div class="divider"></div>
           <div class="tool-label">Process IQ</div>
           <p class="card-desc">Convierte el caos en claridad. Levanta, estructura y documenta flujos de negocio con inteligencia.</p>
+          <span class="card-cta">Entrar <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </div>
+      </a>
+
+      <!-- ─ ECHO · Reseñas de Apps ─ -->
+      <a class="card" href="https://nelson2206.github.io/app-reviews-scraper/" data-char="echo">
+        <div class="char-stage">
+          <div class="stage-ring r1"></div><div class="stage-ring r2"></div>
+          <div class="char-avatar">
+            <svg viewBox="0 0 54 54" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M11 13h32a4 4 0 0 1 4 4v17a4 4 0 0 1-4 4H25l-9 8v-8h-5a4 4 0 0 1-4-4V17a4 4 0 0 1 4-4z" fill="rgba(255,255,255,0.9)"/>
+              <g id="echo-star">
+                <path d="M27 18l2.6 5.6 6.1.6-4.6 4.1 1.4 6L27 31.2 21.1 34.3l1.4-6-4.6-4.1 6.1-.6z" fill="rgba(20,136,176,0.85)"/>
+              </g>
+            </svg>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="char-name">Echo</div>
+          <div class="char-role">El Oyente</div>
+          <div class="divider"></div>
+          <div class="tool-label">Reseñas de Apps</div>
+          <p class="card-desc">Escucha la voz del cliente en App Store y Google Play: busca cualquier app, extrae reseñas y analiza temas y ratings.</p>
           <span class="card-cta">Entrar <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
         </div>
       </a>
