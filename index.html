@@ -683,18 +683,39 @@
               <rect x="0" y="30" width="54" height="9" fill="#41B9FF" fill-opacity="0.55"/>
               <path d="M2 31 Q7 28.5 12 31 T22 31 T32 31 T42 31 T52 31" stroke="white" stroke-width="1.4" stroke-opacity="0.85" fill="none" stroke-linecap="round"/>
 
-              <!-- Arena -->
-              <rect x="0" y="39" width="54" height="15" fill="#ffe6b0" fill-opacity="0.85"/>
+              <!-- Arena (banda más baja, sin llegar a las esquinas) -->
+              <path d="M5 41 Q27 37 49 41 L49 49 Q27 51 5 49 Z" fill="#ffe6b0" fill-opacity="0.9"/>
+
+              <!-- Castillo de arena (centro-izquierda) -->
+              <g fill="#f4c97a">
+                <!-- Cuerpo principal -->
+                <rect x="14" y="38" width="13" height="9" rx="0.5"/>
+                <!-- Torres laterales -->
+                <rect x="12" y="35" width="4" height="12"/>
+                <rect x="25" y="35" width="4" height="12"/>
+                <!-- Almenas -->
+                <rect x="12" y="33.5" width="1.4" height="2"/>
+                <rect x="14.6" y="33.5" width="1.4" height="2"/>
+                <rect x="25" y="33.5" width="1.4" height="2"/>
+                <rect x="27.6" y="33.5" width="1.4" height="2"/>
+              </g>
+              <!-- Puerta -->
+              <path d="M18.5 47 v-3 a2 2 0 0 1 4 0 v3 Z" fill="#c98a3a"/>
+              <!-- Banderines -->
+              <line x1="14" y1="33.5" x2="14" y2="30" stroke="#c98a3a" stroke-width="1"/>
+              <path d="M14 30 L17 31 L14 32 Z" fill="#ff0054"/>
+              <line x1="27" y1="33.5" x2="27" y2="30" stroke="#c98a3a" stroke-width="1"/>
+              <path d="M27 30 L30 31 L27 32 Z" fill="#ff0054"/>
 
               <!-- Palmera (tronco marrón + hojas verdes) -->
-              <path d="M39 52 Q37 44 39 38" stroke="#c98a3a" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+              <path d="M42 50 Q40 44 42 38" stroke="#c98a3a" stroke-width="2.4" stroke-linecap="round" fill="none"/>
               <g fill="#3fbf7f">
-                <path d="M39 38 Q31 34 26 38 Q33 35 39 39 Z"/>
-                <path d="M39 38 Q47 34 52 38 Q45 35 39 39 Z"/>
-                <path d="M39 38 Q33 31 30 26 Q37 32 40 38 Z"/>
-                <path d="M39 38 Q45 31 48 26 Q41 32 39 38 Z"/>
+                <path d="M42 38 Q35 34.5 31 38 Q37 35.5 42 39 Z"/>
+                <path d="M42 38 Q49 34.5 52 38 Q46 35.5 42 39 Z"/>
+                <path d="M42 38 Q37 31.5 34.5 27 Q40 33 42.5 38 Z"/>
+                <path d="M42 38 Q47 31.5 49.5 27 Q44 33 42 38 Z"/>
               </g>
-              <circle cx="39" cy="38" r="1.6" fill="#2a8f5c"/>
+              <circle cx="42" cy="38" r="1.5" fill="#2a8f5c"/>
             </svg>
           </div>
         </div>
