@@ -157,55 +157,56 @@
       display: flex; align-items: center; justify-content: center;
     }
     .laptop-scene {
-      position: relative; width: min(760px, 86vw);
-      transform-origin: 50% 41%; will-change: transform, opacity;
+      position: relative; width: min(720px, 88vw);
+      transform-origin: 50% 40%; will-change: transform, opacity;
     }
+    /* Tapa / marco plateado claro (para que la laptop se vea) */
+    .laptop-lid {
+      position: relative; aspect-ratio: 16 / 10; border-radius: 20px; padding: 3.1%;
+      background: linear-gradient(155deg, #f6f7fa 0%, #d5d9e2 52%, #b7bdca 100%);
+      box-shadow: 0 48px 120px -28px rgba(0,0,0,0.62), 0 0 0 1px rgba(255,255,255,0.55) inset, 0 2px 3px rgba(255,255,255,0.9) inset;
+    }
+    .laptop-cam { position: absolute; top: 1.5%; left: 50%; transform: translateX(-50%); width: 6px; height: 6px; border-radius: 50%; background: #2a2a30; box-shadow: 0 0 0 2px rgba(0,0,0,0.12); }
+    /* Pantalla clara */
     .laptop-screen {
-      position: relative; aspect-ratio: 16 / 10; border-radius: 16px;
-      background: radial-gradient(120% 120% at 30% 20%, #2a0713 0%, #12040c 55%, #0a0308 100%);
-      border: 2px solid #34121f;
-      box-shadow: 0 0 0 2px rgba(255,0,84,0.12), 0 50px 130px -30px rgba(255,0,84,0.45), inset 0 0 70px rgba(0,0,0,0.65);
-      overflow: hidden;
+      position: relative; height: 100%; border-radius: 10px; overflow: hidden;
+      background: radial-gradient(130% 130% at 50% 0%, #ffffff 0%, #f2eefa 58%, #e7e2f3 100%);
+      box-shadow: inset 0 0 0 1.5px rgba(30,10,40,0.10), inset 0 0 44px rgba(120,80,160,0.08);
     }
-    .scr-glow { position: absolute; border-radius: 50%; filter: blur(38px); pointer-events: none; }
-    .scr-glow.g-magenta { width: 46%; height: 60%; left: 8%; top: 24%; background: radial-gradient(circle, rgba(255,0,84,0.55), transparent 70%); animation: glowpulse 5s ease-in-out infinite; }
-    .scr-glow.g-cyan { width: 40%; height: 55%; right: 4%; top: 6%; background: radial-gradient(circle, rgba(65,185,255,0.4), transparent 70%); animation: glowpulse 6.5s ease-in-out infinite reverse; }
-    @keyframes glowpulse { 0%,100%{opacity:0.75;transform:scale(1)} 50%{opacity:1;transform:scale(1.08)} }
-    .scr-code {
-      position: absolute; left: 7%; top: 12%; width: 62%;
-      font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-      font-size: clamp(9px, 1.5vw, 14px); line-height: 1.85; letter-spacing: 0.01em;
-      color: rgba(255,120,170,0.9); text-shadow: 0 0 8px rgba(255,0,84,0.45);
+    .scr-topbar {
+      position: absolute; top: 0; left: 0; right: 0; height: 15%;
+      display: flex; align-items: center; gap: 6px; padding: 0 3.5%;
+      background: rgba(255,255,255,0.55); border-bottom: 1px solid rgba(30,10,40,0.07);
     }
-    .scr-code .c-key { color: #ff2d6f; } .scr-code .c-str { color: #5fd0ff; } .scr-code .c-fn { color: #ff9ecb; } .scr-code .c-cmt { color: rgba(255,255,255,0.32); }
-    .scr-code .cursor { color: #41B9FF; animation: blink 1s steps(2) infinite; }
-    @keyframes blink { 0%,50%{opacity:1} 50.01%,100%{opacity:0} }
-    .scr-dots { position: absolute; right: 6%; bottom: 12%; width: 30%; height: 40%;
-      background-image: radial-gradient(rgba(255,0,84,0.85) 1.4px, transparent 1.6px);
-      background-size: 12px 12px; opacity: 0.5; -webkit-mask-image: linear-gradient(120deg, transparent, #000); mask-image: linear-gradient(120deg, transparent, #000); }
-    /* portal central: lo que se abre al hacer zoom */
-    .scr-portal {
-      position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
-      gap: 8px; opacity: 0; text-align: center;
-      background: radial-gradient(60% 60% at 50% 50%, rgba(255,0,84,0.22), transparent 72%);
+    .scr-topbar .d { width: 7px; height: 7px; border-radius: 50%; }
+    .scr-brand { margin-left: auto; margin-right: auto; font-size: clamp(8px,1.4vw,13px); font-weight: 900; letter-spacing: -0.02em; color: #2a0e1a; }
+    .scr-brand b { background: linear-gradient(120deg,#ff0054,#ff6a9e 50%,#41B9FF); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+    .mini-grid {
+      position: absolute; left: 0; right: 0; top: 15%; bottom: 0;
+      display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: 1fr; gap: 4%; padding: 4.5%;
     }
-    .scr-portal-label { font-size: clamp(1.4rem, 5vw, 2.6rem); font-weight: 900; letter-spacing: -0.03em;
-      background: linear-gradient(120deg,#ff0054,#ff6a9e 45%,#41B9FF); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-      text-shadow: 0 0 40px rgba(255,0,84,0.5); }
-    .scr-portal-sub { font-size: 0.7rem; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(239,230,245,0.7); }
-    .laptop-hinge { height: 8px; margin: 0 22%; background: linear-gradient(180deg,#3a1622,#1a0a12); border-radius: 0 0 6px 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.6); }
+    .mini-card {
+      position: relative; overflow: hidden; border-radius: 13px;
+      display: flex; align-items: flex-end; padding: 7%;
+      color: #fff; font-size: clamp(6px, 1.15vw, 11px); font-weight: 800; letter-spacing: -0.01em;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.35); box-shadow: 0 5px 12px -4px rgba(40,14,26,0.45);
+      transform: scale(0.12); opacity: 0; transform-origin: center; will-change: transform, opacity;
+    }
+    .mini-card::before { content:""; position:absolute; inset:0; background: radial-gradient(120% 100% at 28% 12%, rgba(255,255,255,0.55), transparent 58%); }
+    .mini-card span { position: relative; z-index: 1; }
+    .laptop-hinge { height: 1.6%; min-height: 6px; margin: 0 19%; background: linear-gradient(180deg,#c6cad4,#9aa0ac); border-radius: 0 0 5px 5px; }
     .laptop-base {
-      height: 16px; width: 120%; margin-left: -10%;
-      background: linear-gradient(180deg,#2c141e 0%,#12080f 100%);
-      border-radius: 4px 4px 12px 12px;
-      transform: perspective(760px) rotateX(70deg); transform-origin: top center;
-      box-shadow: 0 30px 50px -18px rgba(0,0,0,0.85), inset 0 2px 4px rgba(255,255,255,0.05);
+      position: relative; height: 2.4%; min-height: 15px; width: 118%; margin-left: -9%;
+      background: linear-gradient(180deg, #eaecf1 0%, #bcc1cc 42%, #949aa6 100%);
+      border-radius: 4px 4px 13px 13px;
+      transform: perspective(820px) rotateX(67deg); transform-origin: top center;
+      box-shadow: 0 34px 56px -18px rgba(0,0,0,0.6), inset 0 2px 3px rgba(255,255,255,0.75);
     }
-    .laptop-base::after { content: ""; position: absolute; left: 42%; top: 3px; width: 16%; height: 4px; border-radius: 3px; background: rgba(255,255,255,0.08); }
+    .laptop-base::after { content: ""; position: absolute; left: 40%; top: 20%; width: 20%; height: 40%; border-radius: 4px; background: linear-gradient(180deg,#d2d6de,#aab0bc); box-shadow: inset 0 1px 2px rgba(0,0,0,0.18); }
     .laptop-caption {
-      position: absolute; bottom: 34px; left: 50%; transform: translateX(-50%);
-      font-size: 10px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(239,230,245,0.42);
-      display: inline-flex; align-items: center; gap: 8px; white-space: nowrap;
+      position: absolute; bottom: 34px; left: 0; right: 0; margin: 0 auto; width: max-content;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(239,230,245,0.5);
+      display: flex; align-items: center; gap: 8px; white-space: nowrap;
     }
     .laptop-caption svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; animation: bob 1.6s ease infinite; }
 
@@ -360,21 +361,24 @@
     <div class="laptop-sticky">
       <div class="laptop-scene">
         <div class="laptop">
-          <div class="laptop-screen">
-            <div class="scr-glow g-magenta"></div>
-            <div class="scr-glow g-cyan"></div>
-            <div class="scr-dots"></div>
-            <div class="scr-code">
-              <div><span class="c-key">const</span> coe = <span class="c-fn">MBC</span>.init();</div>
-              <div>coe.load(<span class="c-str">'holmes'</span>, <span class="c-str">'tailor'</span>, <span class="c-str">'trace'</span>);</div>
-              <div>coe.load(<span class="c-str">'atlas'</span>, <span class="c-str">'echo'</span>, <span class="c-str">'scribe'</span>);</div>
-              <div>coe.load(<span class="c-str">'tempo'</span>, <span class="c-str">'midas'</span>, <span class="c-str">'sigma'</span>);</div>
-              <div><span class="c-key">await</span> coe.deploy(); <span class="c-cmt">// 9 especialistas</span></div>
-              <div>▸ ecosistema listo <span class="cursor">▮</span></div>
-            </div>
-            <div class="scr-portal">
-              <span class="scr-portal-label">COE IA MBC</span>
-              <span class="scr-portal-sub">Abriendo el ecosistema</span>
+          <div class="laptop-lid">
+            <span class="laptop-cam"></span>
+            <div class="laptop-screen">
+              <div class="scr-topbar">
+                <span class="d" style="background:#ff5f57"></span><span class="d" style="background:#febc2e"></span><span class="d" style="background:#28c840"></span>
+                <span class="scr-brand">COE <b>IA</b> MBC</span>
+              </div>
+              <div class="mini-grid">
+                <div class="mini-card" style="background:linear-gradient(150deg,#d76aa6,#8a2e5e)"><span>Holmes</span></div>
+                <div class="mini-card" style="background:linear-gradient(150deg,#4fe0bc,#1d7058)"><span>Tailor</span></div>
+                <div class="mini-card" style="background:linear-gradient(150deg,#b2a5ff,#5b4bc4)"><span>Trace</span></div>
+                <div class="mini-card" style="background:linear-gradient(150deg,#ff5c8a,#c00044)"><span>Atlas</span></div>
+                <div class="mini-card" style="background:linear-gradient(150deg,#7fd8ff,#1e88c4)"><span>Echo</span></div>
+                <div class="mini-card" style="background:linear-gradient(150deg,#ff9d5c,#c85a1e)"><span>Scribe</span></div>
+                <div class="mini-card" style="background:linear-gradient(150deg,#ffcf5a,#c89400)"><span>Tempo</span></div>
+                <div class="mini-card" style="background:linear-gradient(150deg,#ffd76b,#c89a1e)"><span>Midas</span></div>
+                <div class="mini-card" style="background:linear-gradient(150deg,#b2a5ff,#4338ca)"><span>Sigma</span></div>
+              </div>
             </div>
           </div>
           <div class="laptop-hinge"></div>
@@ -634,10 +638,11 @@
     (function laptopZoom() {
       const zone = document.querySelector('.laptop-zone');
       const scene = document.querySelector('.laptop-scene');
-      const portal = document.querySelector('.scr-portal');
+      const minis = [...document.querySelectorAll('.mini-card')];
       const caption = document.querySelector('.laptop-caption');
       if (!zone || !scene || reduce) return;
       const clamp = v => v < 0 ? 0 : v > 1 ? 1 : v;
+      const easeOutBack = x => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
       let p = 0, pt = 0;
       function onScroll() { pt = clamp(-zone.getBoundingClientRect().top / Math.max(1, zone.offsetHeight - innerHeight)); }
       addEventListener('scroll', onScroll, { passive: true });
@@ -645,15 +650,22 @@
       onScroll();
       (function loop() {
         requestAnimationFrame(loop);
-        // solo trabaja cuando la sección está cerca de la vista
         const r = zone.getBoundingClientRect();
         if (r.bottom < -50 || r.top > innerHeight + 50) { p += (pt - p) * 0.12; return; }
         p += (pt - p) * 0.12;
-        // fase 1 (0→0.45): acercamiento suave · fase 2 (0.45→1): zoom fuerte a la pantalla
-        const zoom = p < 0.45 ? 1 + p * 0.55 : 1.25 + Math.pow((p - 0.45) / 0.55, 2) * 9.5;
+
+        // fase 1 (0.12→0.62): las cartillas aparecen dentro de la pantalla, de pequeño a grande (escalonadas)
+        minis.forEach((m, i) => {
+          const local = clamp((p - (0.12 + i * 0.035)) / 0.26);
+          const s = 0.12 + easeOutBack(local) * 0.88;
+          m.style.transform = `scale(${s.toFixed(3)})`;
+          m.style.opacity = clamp(local * 2).toFixed(3);
+        });
+
+        // fase 2 (0.6→1): zoom fuerte hacia la pantalla y disolución hacia el carrusel real
+        const zoom = p < 0.6 ? 1 + p * 0.12 : 1.07 + Math.pow((p - 0.6) / 0.4, 2) * 9;
         scene.style.transform = `scale(${zoom.toFixed(3)})`;
-        scene.style.opacity = (p < 0.82 ? 1 : clamp(1 - (p - 0.82) / 0.16)).toFixed(3);
-        portal.style.opacity = clamp((p - 0.35) / 0.4).toFixed(3);
+        scene.style.opacity = (p < 0.85 ? 1 : clamp(1 - (p - 0.85) / 0.13)).toFixed(3);
         if (caption) caption.style.opacity = clamp(1 - p * 3).toFixed(3);
       })();
     })();
