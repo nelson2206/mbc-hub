@@ -150,11 +150,12 @@
     @keyframes shimmer { to { background-position: 200% center; } }
     @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.55;transform:scale(1.5)} }
 
-    /* ════════ SECCIÓN LAPTOP → ZOOM → CARRUSEL ════════ */
-    .laptop-zone { position: relative; height: 210vh; z-index: 2; }
-    .laptop-sticky {
-      position: sticky; top: 0; height: 100vh; height: 100dvh; overflow: hidden;
+    /* ════════ LAPTOP → ZOOM (capa sobre el carrusel) ════════ */
+    .laptop-overlay {
+      position: absolute; inset: 0; z-index: 30;
       display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(180deg, #160a26 0%, #0b0410 55%, #08030d 100%);
+      will-change: opacity;
     }
     .laptop-scene {
       position: relative; width: min(720px, 88vw);
@@ -163,20 +164,20 @@
     /* Tapa / marco plateado claro (para que la laptop se vea) */
     .laptop-lid {
       position: relative; aspect-ratio: 16 / 10; border-radius: 20px; padding: 3.1%;
-      background: linear-gradient(155deg, #f6f7fa 0%, #d5d9e2 52%, #b7bdca 100%);
-      box-shadow: 0 48px 120px -28px rgba(0,0,0,0.62), 0 0 0 1px rgba(255,255,255,0.55) inset, 0 2px 3px rgba(255,255,255,0.9) inset;
+      background: linear-gradient(155deg, #c9ccd6 0%, #aeb3c0 52%, #969cab 100%);
+      box-shadow: 0 48px 120px -28px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.28) inset, 0 2px 3px rgba(255,255,255,0.5) inset;
     }
     .laptop-cam { position: absolute; top: 1.5%; left: 50%; transform: translateX(-50%); width: 6px; height: 6px; border-radius: 50%; background: #2a2a30; box-shadow: 0 0 0 2px rgba(0,0,0,0.12); }
     /* Pantalla clara */
     .laptop-screen {
       position: relative; height: 100%; border-radius: 10px; overflow: hidden;
-      background: radial-gradient(130% 130% at 50% 0%, #ffffff 0%, #f2eefa 58%, #e7e2f3 100%);
-      box-shadow: inset 0 0 0 1.5px rgba(30,10,40,0.10), inset 0 0 44px rgba(120,80,160,0.08);
+      background: radial-gradient(130% 130% at 50% 0%, #d9d4e6 0%, #ccc6dd 58%, #bfb8d3 100%);
+      box-shadow: inset 0 0 0 1.5px rgba(30,10,40,0.14), inset 0 0 44px rgba(80,50,120,0.12);
     }
     .scr-topbar {
       position: absolute; top: 0; left: 0; right: 0; height: 15%;
       display: flex; align-items: center; gap: 6px; padding: 0 3.5%;
-      background: rgba(255,255,255,0.55); border-bottom: 1px solid rgba(30,10,40,0.07);
+      background: rgba(210,203,226,0.55); border-bottom: 1px solid rgba(30,10,40,0.1);
     }
     .scr-topbar .d { width: 7px; height: 7px; border-radius: 50%; }
     .scr-brand { margin-left: auto; margin-right: auto; font-size: clamp(8px,1.4vw,13px); font-weight: 900; letter-spacing: -0.02em; color: #2a0e1a; }
@@ -210,8 +211,8 @@
     }
     .laptop-caption svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; animation: bob 1.6s ease infinite; }
 
-    /* ════════ ZONA DE SCROLL (el scroll conduce el carrusel) ════════ */
-    .stage-zone { position: relative; height: calc(100vh + 8 * 52vh); z-index: 2; }
+    /* ════════ ZONA DE SCROLL (intro laptop + carrusel) ════════ */
+    .stage-zone { position: relative; height: 640vh; z-index: 2; }
     .stage-sticky {
       position: sticky; top: 0; height: 100vh; height: 100dvh;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -310,8 +311,7 @@
       *, *::before, *::after { animation: none !important; }
       .hero { height: 100dvh; }
       .hero-content > *, .scroll-hint { opacity: 1 !important; }
-      .laptop-zone { height: auto; }
-      .laptop-sticky { position: static; height: auto; padding: 50px 0; }
+      .laptop-overlay { display: none; }
       .stage-zone { height: auto; }
       .stage-sticky { position: static; height: auto; overflow: visible; padding: 30px 0; }
       .deck { display: flex; gap: 20px; overflow-x: auto; height: auto; padding: 10px 24px; scroll-snap-type: x mandatory; }
@@ -355,39 +355,6 @@
       </a>
     </nav>
   </div>
-
-  <!-- ══ LAPTOP → ZOOM → CARRUSEL ══ -->
-  <section class="laptop-zone">
-    <div class="laptop-sticky">
-      <div class="laptop-scene">
-        <div class="laptop">
-          <div class="laptop-lid">
-            <span class="laptop-cam"></span>
-            <div class="laptop-screen">
-              <div class="scr-topbar">
-                <span class="d" style="background:#ff5f57"></span><span class="d" style="background:#febc2e"></span><span class="d" style="background:#28c840"></span>
-                <span class="scr-brand">COE <b>IA</b> MBC</span>
-              </div>
-              <div class="mini-grid">
-                <div class="mini-card" style="background:linear-gradient(150deg,#d76aa6,#8a2e5e)"><span>Holmes</span></div>
-                <div class="mini-card" style="background:linear-gradient(150deg,#4fe0bc,#1d7058)"><span>Tailor</span></div>
-                <div class="mini-card" style="background:linear-gradient(150deg,#b2a5ff,#5b4bc4)"><span>Trace</span></div>
-                <div class="mini-card" style="background:linear-gradient(150deg,#ff5c8a,#c00044)"><span>Atlas</span></div>
-                <div class="mini-card" style="background:linear-gradient(150deg,#7fd8ff,#1e88c4)"><span>Echo</span></div>
-                <div class="mini-card" style="background:linear-gradient(150deg,#ff9d5c,#c85a1e)"><span>Scribe</span></div>
-                <div class="mini-card" style="background:linear-gradient(150deg,#ffcf5a,#c89400)"><span>Tempo</span></div>
-                <div class="mini-card" style="background:linear-gradient(150deg,#ffd76b,#c89a1e)"><span>Midas</span></div>
-                <div class="mini-card" style="background:linear-gradient(150deg,#b2a5ff,#4338ca)"><span>Sigma</span></div>
-              </div>
-            </div>
-          </div>
-          <div class="laptop-hinge"></div>
-          <div class="laptop-base"></div>
-        </div>
-      </div>
-      <div class="laptop-caption"><svg viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></svg> Baja para entrar al ecosistema</div>
-    </div>
-  </section>
 
   <section class="stage-zone" id="zone">
     <div class="stage-sticky">
@@ -483,6 +450,37 @@
 
       <div class="progress" id="progress"></div>
       <div class="scroll-cue"><svg viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></svg> Scroll para navegar</div>
+
+      <!-- capa laptop: cubre el carrusel al inicio y al hacer zoom se disuelve dejándolo a la vista -->
+      <div class="laptop-overlay" id="laptopOverlay">
+        <div class="laptop-scene">
+          <div class="laptop">
+            <div class="laptop-lid">
+              <span class="laptop-cam"></span>
+              <div class="laptop-screen">
+                <div class="scr-topbar">
+                  <span class="d" style="background:#ff5f57"></span><span class="d" style="background:#febc2e"></span><span class="d" style="background:#28c840"></span>
+                  <span class="scr-brand">COE <b>IA</b> MBC</span>
+                </div>
+                <div class="mini-grid">
+                  <div class="mini-card" style="background:linear-gradient(150deg,#d76aa6,#8a2e5e)"><span>Holmes</span></div>
+                  <div class="mini-card" style="background:linear-gradient(150deg,#4fe0bc,#1d7058)"><span>Tailor</span></div>
+                  <div class="mini-card" style="background:linear-gradient(150deg,#b2a5ff,#5b4bc4)"><span>Trace</span></div>
+                  <div class="mini-card" style="background:linear-gradient(150deg,#ff5c8a,#c00044)"><span>Atlas</span></div>
+                  <div class="mini-card" style="background:linear-gradient(150deg,#7fd8ff,#1e88c4)"><span>Echo</span></div>
+                  <div class="mini-card" style="background:linear-gradient(150deg,#ff9d5c,#c85a1e)"><span>Scribe</span></div>
+                  <div class="mini-card" style="background:linear-gradient(150deg,#ffcf5a,#c89400)"><span>Tempo</span></div>
+                  <div class="mini-card" style="background:linear-gradient(150deg,#ffd76b,#c89a1e)"><span>Midas</span></div>
+                  <div class="mini-card" style="background:linear-gradient(150deg,#b2a5ff,#4338ca)"><span>Sigma</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="laptop-hinge"></div>
+            <div class="laptop-base"></div>
+          </div>
+        </div>
+        <div class="laptop-caption"><svg viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></svg> Baja para entrar al ecosistema</div>
+      </div>
     </div>
   </section>
 
@@ -634,43 +632,7 @@
       })();
     })();
 
-    /* ═══════════════ LAPTOP → ZOOM (conducido por scroll) ═══════════════ */
-    (function laptopZoom() {
-      const zone = document.querySelector('.laptop-zone');
-      const scene = document.querySelector('.laptop-scene');
-      const minis = [...document.querySelectorAll('.mini-card')];
-      const caption = document.querySelector('.laptop-caption');
-      if (!zone || !scene || reduce) return;
-      const clamp = v => v < 0 ? 0 : v > 1 ? 1 : v;
-      const easeOutBack = x => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
-      let p = 0, pt = 0;
-      function onScroll() { pt = clamp(-zone.getBoundingClientRect().top / Math.max(1, zone.offsetHeight - innerHeight)); }
-      addEventListener('scroll', onScroll, { passive: true });
-      addEventListener('resize', onScroll, { passive: true });
-      onScroll();
-      (function loop() {
-        requestAnimationFrame(loop);
-        const r = zone.getBoundingClientRect();
-        if (r.bottom < -50 || r.top > innerHeight + 50) { p += (pt - p) * 0.12; return; }
-        p += (pt - p) * 0.12;
-
-        // fase 1 (0.12→0.62): las cartillas aparecen dentro de la pantalla, de pequeño a grande (escalonadas)
-        minis.forEach((m, i) => {
-          const local = clamp((p - (0.12 + i * 0.035)) / 0.26);
-          const s = 0.12 + easeOutBack(local) * 0.88;
-          m.style.transform = `scale(${s.toFixed(3)})`;
-          m.style.opacity = clamp(local * 2).toFixed(3);
-        });
-
-        // fase 2 (0.6→1): zoom fuerte hacia la pantalla y disolución hacia el carrusel real
-        const zoom = p < 0.6 ? 1 + p * 0.12 : 1.07 + Math.pow((p - 0.6) / 0.4, 2) * 9;
-        scene.style.transform = `scale(${zoom.toFixed(3)})`;
-        scene.style.opacity = (p < 0.85 ? 1 : clamp(1 - (p - 0.85) / 0.13)).toFixed(3);
-        if (caption) caption.style.opacity = clamp(1 - p * 3).toFixed(3);
-      })();
-    })();
-
-    /* ════════ CARRUSEL CONDUCIDO POR SCROLL ════════ */
+    /* ════════ CARRUSEL + INTRO LAPTOP (conducidos por scroll) ════════ */
     const zone = document.getElementById('zone');
     const deck = document.getElementById('deck');
     const cards = [...deck.querySelectorAll('.card')];
@@ -689,10 +651,20 @@
       return d;
     });
 
+    // ── capa laptop (intro): ocupa el primer tramo del scroll ──
+    const INTRO = 0.24;                            // 24% del scroll = intro laptop
+    const overlay = document.getElementById('laptopOverlay');
+    const scene = overlay ? overlay.querySelector('.laptop-scene') : null;
+    const minis = [...document.querySelectorAll('.mini-card')];
+    const laptopCap = overlay ? overlay.querySelector('.laptop-caption') : null;
+    const clamp01 = v => v < 0 ? 0 : v > 1 ? 1 : v;
+    const easeOutBack = x => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+
     function scrollToIndex(i) {
       const total = zone.offsetHeight - innerHeight;
       const top = zone.getBoundingClientRect().top + scrollY;
-      window.scrollTo({ top: top + (i / (N - 1)) * total, behavior: 'smooth' });
+      const f = INTRO + (i / (N - 1)) * (1 - INTRO);   // el carrusel vive tras el intro
+      window.scrollTo({ top: top + f * total, behavior: 'smooth' });
     }
 
     // tarjetas en penumbra: click = traerlas al frente (no navegar)
@@ -702,11 +674,12 @@
       });
     });
 
-    let target = 0, act = -0.0001, lastAI = -1;
+    let target = 0, act = -0.0001, lastAI = -1, introTarget = 0, introP = 0;
     function onScroll() {
       const total = Math.max(1, zone.offsetHeight - innerHeight);
-      const p = Math.min(1, Math.max(0, -zone.getBoundingClientRect().top / total));
-      target = p * (N - 1);
+      const f = Math.min(1, Math.max(0, -zone.getBoundingClientRect().top / total));
+      if (f <= INTRO) { introTarget = f / INTRO; target = 0; }
+      else { introTarget = 1; target = ((f - INTRO) / (1 - INTRO)) * (N - 1); }
     }
 
     if (!reduce) {
@@ -716,6 +689,28 @@
 
       (function layout() {
         requestAnimationFrame(layout);
+
+        // ── INTRO LAPTOP: mini-tarjetas crecen dentro de la pantalla, luego zoom y disolución (reversible) ──
+        if (overlay) {
+          introP += (introTarget - introP) * 0.12;
+          if (introP < 0.999 || introTarget < 0.999) {
+            minis.forEach((m, i) => {
+              const local = clamp01((introP - (0.08 + i * 0.05)) / 0.32);
+              const s = 0.12 + easeOutBack(local) * 0.88;
+              m.style.transform = `scale(${s.toFixed(3)})`;
+              m.style.opacity = clamp01(local * 2).toFixed(3);
+            });
+            const zoom = introP < 0.62 ? 1 + introP * 0.14 : 1.09 + Math.pow((introP - 0.62) / 0.38, 2) * 9;
+            if (scene) scene.style.transform = `scale(${zoom.toFixed(3)})`;
+            const ov = introP < 0.72 ? 1 : Math.max(0, 1 - (introP - 0.72) / 0.26);
+            overlay.style.opacity = ov.toFixed(3);
+            overlay.style.pointerEvents = ov < 0.05 ? 'none' : '';
+            if (laptopCap) laptopCap.style.opacity = Math.max(0, 1 - introP * 2.4).toFixed(3);
+          } else if (overlay.style.opacity !== '0') {
+            overlay.style.opacity = '0'; overlay.style.pointerEvents = 'none';
+          }
+        }
+
         act += (target - act) * 0.11;
         const stepX = Math.min(500, innerWidth * 0.62) * 0.86;
         cards.forEach((c, i) => {
