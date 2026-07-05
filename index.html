@@ -154,7 +154,7 @@
 
     /* ════════ LAPTOP → ZOOM (capa sobre el carrusel) ════════ */
     .laptop-overlay {
-      position: absolute; inset: 0; z-index: 30;
+      position: absolute; inset: 0; z-index: 500;
       display: flex; align-items: center; justify-content: center;
       background: linear-gradient(180deg, #160a26 0%, #0b0410 55%, #08030d 100%);
       will-change: opacity;
@@ -184,19 +184,14 @@
     .scr-topbar .d { width: 7px; height: 7px; border-radius: 50%; }
     .scr-brand { margin-left: auto; margin-right: auto; font-size: clamp(8px,1.4vw,13px); font-weight: 900; letter-spacing: -0.02em; color: #2a0e1a; }
     .scr-brand b { background: linear-gradient(120deg,#ff0054,#ff6a9e 50%,#41B9FF); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
-    .mini-grid {
+    .scr-body {
       position: absolute; left: 0; right: 0; top: 15%; bottom: 0;
-      display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: 1fr; gap: 4%; padding: 4.5%;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3%;
     }
-    .mini-card {
-      position: relative; overflow: hidden; border-radius: 13px;
-      display: flex; align-items: flex-end; padding: 7%;
-      color: #fff; font-size: clamp(6px, 1.15vw, 11px); font-weight: 800; letter-spacing: -0.01em;
-      text-shadow: 0 1px 3px rgba(0,0,0,0.35); box-shadow: 0 5px 12px -4px rgba(40,14,26,0.45);
-      transform: scale(0.12); opacity: 0; transform-origin: center; will-change: transform, opacity;
-    }
-    .mini-card::before { content:""; position:absolute; inset:0; background: radial-gradient(120% 100% at 28% 12%, rgba(255,255,255,0.55), transparent 58%); }
-    .mini-card span { position: relative; z-index: 1; }
+    .scr-mark { font-size: clamp(1.4rem, 5vw, 2.8rem); font-weight: 900; letter-spacing: -0.035em; color: #2a0e1a; }
+    .scr-mark b { background: linear-gradient(120deg,#ff0054,#ff6a9e 50%,#41B9FF); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+    .scr-sub { font-size: clamp(8px, 1.5vw, 12px); font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(42,14,26,0.5); display: inline-flex; align-items: center; gap: 8px; }
+    .scr-sub::before, .scr-sub::after { content: ""; width: 18px; height: 2px; border-radius: 2px; background: rgba(255,0,84,0.4); }
     .laptop-hinge { height: 1.6%; min-height: 6px; margin: 0 19%; background: linear-gradient(180deg,#c6cad4,#9aa0ac); border-radius: 0 0 5px 5px; }
     .laptop-base {
       position: relative; height: 2.4%; min-height: 15px; width: 118%; margin-left: -9%;
@@ -229,7 +224,7 @@
     }
     .group-tag .gd { width: 8px; height: 8px; border-radius: 50%; transition: background 0.4s, box-shadow 0.4s; }
 
-    .deck { position: relative; width: 100%; height: min(560px, 66vh); }
+    .deck { position: relative; width: 100%; height: min(560px, 66vh); transform-origin: 50% 50%; will-change: transform, opacity; }
 
     /* ════════ CARD ════════ */
     .card {
@@ -482,18 +477,10 @@
               <div class="laptop-screen">
                 <div class="scr-topbar">
                   <span class="d" style="background:#ff5f57"></span><span class="d" style="background:#febc2e"></span><span class="d" style="background:#28c840"></span>
-                  <span class="scr-brand">COE <b>IA</b> MBC</span>
                 </div>
-                <div class="mini-grid">
-                  <div class="mini-card" style="background:linear-gradient(150deg,#d76aa6,#8a2e5e)"><span>Holmes</span></div>
-                  <div class="mini-card" style="background:linear-gradient(150deg,#4fe0bc,#1d7058)"><span>Tailor</span></div>
-                  <div class="mini-card" style="background:linear-gradient(150deg,#b2a5ff,#5b4bc4)"><span>Trace</span></div>
-                  <div class="mini-card" style="background:linear-gradient(150deg,#ff5c8a,#c00044)"><span>Atlas</span></div>
-                  <div class="mini-card" style="background:linear-gradient(150deg,#7fd8ff,#1e88c4)"><span>Echo</span></div>
-                  <div class="mini-card" style="background:linear-gradient(150deg,#ff9d5c,#c85a1e)"><span>Scribe</span></div>
-                  <div class="mini-card" style="background:linear-gradient(150deg,#ffcf5a,#c89400)"><span>Tempo</span></div>
-                  <div class="mini-card" style="background:linear-gradient(150deg,#ffd76b,#c89a1e)"><span>Midas</span></div>
-                  <div class="mini-card" style="background:linear-gradient(150deg,#b2a5ff,#4338ca)"><span>Sigma</span></div>
+                <div class="scr-body">
+                  <div class="scr-mark">COE <b>IA</b> MBC</div>
+                  <div class="scr-sub">El ecosistema</div>
                 </div>
               </div>
             </div>
@@ -677,10 +664,8 @@
     const INTRO = 0.24;                            // 24% del scroll = intro laptop
     const overlay = document.getElementById('laptopOverlay');
     const scene = overlay ? overlay.querySelector('.laptop-scene') : null;
-    const minis = [...document.querySelectorAll('.mini-card')];
     const laptopCap = overlay ? overlay.querySelector('.laptop-caption') : null;
     const clamp01 = v => v < 0 ? 0 : v > 1 ? 1 : v;
-    const easeOutBack = x => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
 
     function scrollToIndex(i) {
       const total = zone.offsetHeight - innerHeight;
@@ -713,24 +698,23 @@
         requestAnimationFrame(layout);
         if (document.body.classList.contains('mode-grid')) return;   // en cuadrícula manda el CSS grid
 
-        // ── INTRO LAPTOP: mini-tarjetas crecen dentro de la pantalla, luego zoom y disolución (reversible) ──
+        // ── INTRO: la laptop se disuelve, luego el carrusel real aparece chiquito y crece (reversible) ──
         if (overlay) {
           introP += (introTarget - introP) * 0.12;
           if (introP < 0.999 || introTarget < 0.999) {
-            minis.forEach((m, i) => {
-              const local = clamp01((introP - (0.08 + i * 0.05)) / 0.32);
-              const s = 0.12 + easeOutBack(local) * 0.88;
-              m.style.transform = `scale(${s.toFixed(3)})`;
-              m.style.opacity = clamp01(local * 2).toFixed(3);
-            });
-            const zoom = introP < 0.62 ? 1 + introP * 0.14 : 1.09 + Math.pow((introP - 0.62) / 0.38, 2) * 9;
-            if (scene) scene.style.transform = `scale(${zoom.toFixed(3)})`;
-            const ov = introP < 0.72 ? 1 : Math.max(0, 1 - (introP - 0.72) / 0.26);
+            // 1) laptop: leve acercamiento + fade out temprano (0 → ~0.5)
+            if (scene) scene.style.transform = `scale(${(1 + introP * 0.5).toFixed(3)})`;
+            const ov = introP < 0.5 ? 1 : Math.max(0, 1 - (introP - 0.5) / 0.2);
             overlay.style.opacity = ov.toFixed(3);
             overlay.style.pointerEvents = ov < 0.05 ? 'none' : '';
             if (laptopCap) laptopCap.style.opacity = Math.max(0, 1 - introP * 2.4).toFixed(3);
-          } else if (overlay.style.opacity !== '0') {
-            overlay.style.opacity = '0'; overlay.style.pointerEvents = 'none';
+            // 2) carrusel real: aparece chiquito y crece a tamaño completo (después de irse la laptop)
+            const grow = clamp01((introP - 0.6) / 0.4);
+            deck.style.transform = `scale(${(0.4 + grow * 0.6).toFixed(3)})`;
+            deck.style.opacity = clamp01((introP - 0.58) / 0.14).toFixed(3);
+          } else {
+            if (overlay.style.opacity !== '0') { overlay.style.opacity = '0'; overlay.style.pointerEvents = 'none'; }
+            if (deck.style.transform) { deck.style.transform = ''; deck.style.opacity = ''; }
           }
         }
 
@@ -778,6 +762,7 @@
       if (grid) {
         // limpiar los transforms del carrusel para que el grid CSS mande
         cards.forEach(c => { c.style.transform = ''; c.style.zIndex = ''; c.style.opacity = ''; c.style.removeProperty('--dim'); c.classList.remove('is-active'); });
+        deck.style.transform = ''; deck.style.opacity = '';
         if (overlay) { overlay.style.opacity = '0'; overlay.style.pointerEvents = 'none'; }
         glabel.textContent = 'Todas las herramientas'; glabel.style.color = ''; gdot.style.background = 'var(--rose)'; gdot.style.boxShadow = '0 0 12px var(--rose)';
       } else {
