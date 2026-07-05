@@ -60,7 +60,9 @@
       opacity: 0.05; mix-blend-mode: overlay;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     }
-    #cards-gl { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+    /* buffer WebGL compartido (offscreen); cada tarjeta pinta su propio lienzo 2D */
+    #cards-gl { position: fixed; left: -99999px; top: 0; width: 8px; height: 8px; pointer-events: none; }
+    .card-cv { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; }
 
     /* ════════ SWITCH DE VISTA (despues del Hero, sticky al hacer scroll) ════════ */
     .view-switch-bar {
@@ -305,6 +307,26 @@
 
     footer { text-align: center; padding: 40px 24px 70px; font-size: 0.78rem; color: var(--text-soft); position: relative; z-index: 2; }
 
+    /* ════════ MODO CUADRÍCULA ("Ver todos") — mismo mazo, re-maquetado, sin recargar ════════ */
+    body.mode-grid .laptop-overlay,
+    body.mode-grid .progress,
+    body.mode-grid .scroll-cue { display: none !important; }
+    body.mode-grid .stage-zone { height: auto !important; }
+    body.mode-grid .stage-sticky { position: static; height: auto; overflow: visible; display: block; padding: 8px 0 0; }
+    body.mode-grid .group-tag { margin: 0 auto 26px; }
+    body.mode-grid .deck {
+      position: relative; height: auto; width: auto;
+      max-width: 1180px; margin: 0 auto; padding: 0 24px;
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 22px;
+    }
+    body.mode-grid .card {
+      position: relative; left: auto; top: auto; width: auto;
+      transform: none !important; opacity: 1 !important; --dim: 0 !important;
+      animation: grid-in 0.6s var(--ease-out) both;
+    }
+    body.mode-grid .card::after { display: none; }
+    @keyframes grid-in { from { opacity: 0; transform: translateY(26px) scale(0.96); } to { opacity: 1; transform: none; } }
+
     /* Fallback sin animaciones: fila con scroll horizontal nativo */
     @media (max-width: 600px) { h1.hub-title { font-size: 2.1rem; } }
     @media (prefers-reduced-motion: reduce) {
@@ -345,11 +367,11 @@
 
   <div class="view-switch-bar">
     <nav class="view-switch" aria-label="Cambiar vista">
-      <a href="index.html" class="is-on" aria-current="page">
+      <a href="#" data-mode="carrusel" class="is-on" aria-current="page">
         <svg viewBox="0 0 24 24"><rect x="3" y="6" width="6" height="12" rx="1.5"/><rect x="10.5" y="4" width="6" height="16" rx="1.5"/><rect x="18" y="7" width="4" height="10" rx="1.5"/></svg>
         <span>Carrusel</span>
       </a>
-      <a href="cuadricula.html">
+      <a href="#" data-mode="grid">
         <svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg>
         <span>Ver todos</span>
       </a>
@@ -689,6 +711,7 @@
 
       (function layout() {
         requestAnimationFrame(layout);
+        if (document.body.classList.contains('mode-grid')) return;   // en cuadrícula manda el CSS grid
 
         // ── INTRO LAPTOP: mini-tarjetas crecen dentro de la pantalla, luego zoom y disolución (reversible) ──
         if (overlay) {
@@ -742,12 +765,41 @@
       cards.forEach(c => (c.dataset.ad = '0'));
     }
 
+    /* ════════ SWITCH DE VISTA SIN RECARGAR (Carrusel ⇄ Ver todos) ════════ */
+    function setMode(mode) {
+      const grid = mode === 'grid';
+      document.body.classList.toggle('mode-grid', grid);
+      document.body.classList.toggle('mode-carrusel', !grid);
+      document.querySelectorAll('.view-switch a').forEach(a => {
+        const on = a.dataset.mode === mode;
+        a.classList.toggle('is-on', on);
+        if (on) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
+      });
+      if (grid) {
+        // limpiar los transforms del carrusel para que el grid CSS mande
+        cards.forEach(c => { c.style.transform = ''; c.style.zIndex = ''; c.style.opacity = ''; c.style.removeProperty('--dim'); c.classList.remove('is-active'); });
+        if (overlay) { overlay.style.opacity = '0'; overlay.style.pointerEvents = 'none'; }
+        glabel.textContent = 'Todas las herramientas'; glabel.style.color = ''; gdot.style.background = 'var(--rose)'; gdot.style.boxShadow = '0 0 12px var(--rose)';
+      } else {
+        introP = 0; act = -0.0001; lastAI = -1;
+        if (!reduce) onScroll();
+      }
+      window.scrollTo(0, 0);
+      try { localStorage.setItem('coe-view', mode); } catch (e) {}
+    }
+    document.querySelectorAll('.view-switch a').forEach(a => {
+      a.addEventListener('click', e => { e.preventDefault(); setMode(a.dataset.mode); });
+    });
+    // vista inicial: carrusel por defecto (recuerda la última elección)
+    let _saved = 'carrusel'; try { _saved = localStorage.getItem('coe-view') || 'carrusel'; } catch (e) {}
+    setMode(_saved === 'grid' ? 'grid' : 'carrusel');
+
     /* ════════ OBJETOS 3D POR IDENTIDAD (renderer compartido) ════════ */
     (function cardScenes() {
       const canvas = document.getElementById('cards-gl');
       const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-      renderer.setPixelRatio(DPR);
-      renderer.setScissorTest(true);
+      renderer.setPixelRatio(1);
+      const CDPR = Math.min(DPR, 1.75);
 
       const metal = (c, e, m = 0.72, r = 0.27) => new THREE.MeshStandardMaterial({ color: c, emissive: e, emissiveIntensity: 0.3, metalness: m, roughness: r });
       const box = (w, h, d, mat) => new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
@@ -983,6 +1035,10 @@
         const stage = card.querySelector('.char-stage');
         const cfg = THEME[card.dataset.char];
         if (!cfg) return;
+        const cv = document.createElement('canvas');
+        cv.className = 'card-cv';
+        stage.appendChild(cv);
+        const ctx = cv.getContext('2d');
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 100);
         camera.position.set(0, 0, 4);
@@ -991,36 +1047,36 @@
         const k2 = new THREE.PointLight(cfg.l2, 32, 20, 2); k2.position.set(-3, -2, 3); scene.add(k2);
         const mesh = cfg.build();
         scene.add(mesh);
-        const item = { card, stage, scene, camera, mesh, sub: cfg.sub, spin: !!cfg.spin, rot: Math.random() * 6, hover: false };
+        const item = { card, stage, cv, ctx, scene, camera, mesh, sub: cfg.sub, spin: !!cfg.spin, rot: Math.random() * 6, hover: false };
         card.addEventListener('pointerenter', () => item.hover = true);
         card.addEventListener('pointerleave', () => item.hover = false);
         items.push(item);
       });
 
-      function resizeGl() { renderer.setSize(innerWidth, innerHeight, false); }
-      addEventListener('resize', resizeGl, { passive: true });
-      resizeGl();
-
+      // Render por-tarjeta: se renderiza en el buffer compartido al tamaño de la tarjeta y se copia
+      // a un lienzo 2D dentro de cada tarjeta (viaja pegado a ella → sin atraso al hacer scroll).
+      let curW = 0, curH = 0;
       const clock = new THREE.Clock();
       (function loop() {
         requestAnimationFrame(loop);
         const dt = Math.min(clock.getDelta(), 0.05);
         const t = clock.elapsedTime;
-        const H = renderer.domElement.clientHeight;
-        // pintar de atrás hacia adelante: la tarjeta activa se dibuja al final
-        const ordered = [...items].sort((a, b) => parseFloat(b.card.dataset.ad || 0) - parseFloat(a.card.dataset.ad || 0));
-        for (const it of ordered) {
+        for (const it of items) {
           const r = it.stage.getBoundingClientRect();
-          if (r.bottom < 0 || r.top > innerHeight || r.right < 0 || r.left > innerWidth || r.width === 0) continue;
+          if (r.bottom < -40 || r.top > innerHeight + 40 || r.right < 0 || r.left > innerWidth || r.width === 0) continue;
+          const ow = it.stage.offsetWidth, oh = it.stage.offsetHeight;      // tamaño sin transform (estable)
+          if (!ow || !oh) continue;
+          const pw = Math.max(1, Math.round(ow * CDPR)), ph = Math.max(1, Math.round(oh * CDPR));
+          if (it.cv.width !== pw || it.cv.height !== ph) { it.cv.width = pw; it.cv.height = ph; }
           if (it.spin) { it.rot += (it.hover ? 1.4 : 0.4) * dt; it.mesh.rotation.y = it.rot; }
           else { it.mesh.rotation.y += (Math.sin(t * 0.5) * 0.35 - it.mesh.rotation.y) * 0.06; }
           it.mesh.position.y = Math.sin(t * 0.9 + it.rot) * 0.05;
           if (it.sub) it.sub(it.mesh, dt, t, it.hover);
-          const w = r.width, h = r.height, left = r.left, bottom = H - r.bottom;
-          renderer.setViewport(left, bottom, w, h);
-          renderer.setScissor(left, bottom, w, h);
-          it.camera.aspect = w / h; it.camera.updateProjectionMatrix();
+          if (curW !== pw || curH !== ph) { renderer.setSize(pw, ph, false); curW = pw; curH = ph; }
+          it.camera.aspect = ow / oh; it.camera.updateProjectionMatrix();
           renderer.render(it.scene, it.camera);
+          it.ctx.clearRect(0, 0, pw, ph);
+          it.ctx.drawImage(renderer.domElement, 0, 0, pw, ph);
         }
       })();
     })();
