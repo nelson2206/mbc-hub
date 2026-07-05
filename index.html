@@ -62,11 +62,14 @@
     }
     #cards-gl { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
 
-    /* ════════ SWITCH DE VISTA (fijo, arriba) ════════ */
+    /* ════════ SWITCH DE VISTA (despues del Hero, sticky al hacer scroll) ════════ */
+    .view-switch-bar {
+      position: sticky; top: 14px; z-index: 60;
+      display: flex; justify-content: center; padding: 0 24px; pointer-events: none;
+    }
     .view-switch {
-      position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
-      z-index: 60; display: inline-flex; gap: 4px; padding: 5px;
-      background: rgba(20,10,32,0.62); border: 1px solid var(--glass-brd);
+      pointer-events: auto; display: inline-flex; gap: 4px; padding: 5px;
+      background: rgba(20,10,32,0.72); border: 1px solid var(--glass-brd);
       border-radius: 9999px; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
       box-shadow: 0 12px 34px -14px rgba(0,0,0,0.7);
     }
@@ -81,23 +84,71 @@
     .view-switch a:not(.is-on):hover { color: var(--text); background: rgba(255,255,255,0.06); }
     @media (max-width: 480px) { .view-switch a { padding: 8px 12px; font-size: 10px; } .view-switch a span { display: none; } }
 
-    header { text-align: center; padding: 96px 24px 8px; position: relative; z-index: 2; }
+    /* ════════ HERO 3D ════════ */
+    .hero { position: relative; height: 180vh; }
+    .hero-sticky {
+      position: sticky; top: 0; z-index: 5;
+      height: 100vh; height: 100dvh; overflow: hidden;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; padding: 24px;
+    }
+    #hero-gl {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      z-index: 0; cursor: grab; touch-action: none;
+    }
+    #hero-gl:active { cursor: grabbing; }
+    .hero-content { position: relative; z-index: 3; pointer-events: none; will-change: transform, opacity; margin-top: 16vh; }
+    .hero-content > * { pointer-events: auto; }
+
     .eyebrow {
       display: inline-flex; align-items: center; gap: 9px;
-      font-size: 10px; font-weight: 800; letter-spacing: 0.24em; text-transform: uppercase;
-      color: var(--text-soft); border: 1px solid var(--glass-brd); border-radius: 9999px;
-      padding: 7px 15px; margin-bottom: 16px; background: rgba(255,255,255,0.04); backdrop-filter: blur(8px);
+      font-size: 10px; font-weight: 800; letter-spacing: 0.26em; text-transform: uppercase;
+      color: var(--text-soft); margin-bottom: 22px; padding: 8px 16px; border-radius: 9999px;
+      background: rgba(255,255,255,0.04); border: 1px solid var(--glass-brd); backdrop-filter: blur(8px);
+      opacity: 0; animation: rise 0.7s var(--ease-out) 0.2s forwards;
     }
     .eyebrow .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--rose); box-shadow: 0 0 14px var(--rose); animation: pulse 2.2s ease infinite; }
-    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.55;transform:scale(1.5)} }
-    h1 { font-size: clamp(1.8rem, 4.5vw, 3rem); font-weight: 900; letter-spacing: -0.04em; margin-bottom: 10px; }
-    h1 .accent {
+    h1.hub-title {
+      font-size: clamp(2.1rem, 6.5vw, 4.8rem); font-weight: 900; letter-spacing: -0.04em; line-height: 0.95;
+      margin-bottom: 16px; opacity: 0; animation: rise 0.8s var(--ease-out) 0.3s forwards;
+      text-shadow: 0 2px 24px rgba(11,4,16,0.85), 0 0 60px rgba(255,0,84,0.22);
+    }
+    h1.hub-title .accent {
       background: linear-gradient(120deg, #ff0054 0%, #ff6a9e 45%, #41B9FF 100%); background-size: 200% auto;
       -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
       animation: shimmer 6s linear infinite;
     }
+    .hub-tagline {
+      font-size: clamp(1rem, 2vw, 1.28rem); color: var(--text-soft); max-width: 540px; margin: 0 auto;
+      line-height: 1.5; font-weight: 500; opacity: 0; animation: rise 0.7s var(--ease-out) 0.42s forwards;
+    }
+    .role-rotator { display: inline-flex; vertical-align: bottom; height: 1.5em; overflow: hidden; position: relative; font-weight: 800; color: var(--text); }
+    .role-rotator span { display: block; animation: roll 16s var(--ease-out) infinite; }
+    @keyframes roll {
+      0%,8%{transform:translateY(0)} 11.11%,19.11%{transform:translateY(-1.5em)} 22.22%,30.22%{transform:translateY(-3em)}
+      33.33%,41.33%{transform:translateY(-4.5em)} 44.44%,52.44%{transform:translateY(-6em)} 55.56%,63.56%{transform:translateY(-7.5em)}
+      66.67%,74.67%{transform:translateY(-9em)} 77.78%,85.78%{transform:translateY(-10.5em)} 88.89%,96.89%{transform:translateY(-12em)}
+      100%{transform:translateY(-13.5em)}
+    }
+    .role-rotator b { display:block; height: 1.5em; font-weight: 800; }
+    .r-atlas{color:#ff5c8a}.r-holmes{color:#d76aa6}.r-tailor{color:#4fe0bc}.r-tempo{color:#ffcf5a}
+    .r-midas{color:#ffd76b}.r-trace{color:#b2a5ff}.r-echo{color:#7fd8ff}.r-sigma{color:#b2a5ff}.r-scribe{color:#ff9d5c}
+
+    .scroll-hint {
+      position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 3;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(239,230,245,0.4);
+      display: inline-flex; flex-direction: column; align-items: center; gap: 10px;
+      opacity: 0; animation: rise 0.7s var(--ease-out) 1s forwards;
+    }
+    .scroll-hint .mouse { width: 22px; height: 34px; border: 2px solid rgba(239,230,245,0.35); border-radius: 12px; position: relative; }
+    .scroll-hint .mouse::after { content:""; position:absolute; top:6px; left:50%; transform:translateX(-50%); width:3px; height:6px; border-radius:2px; background: var(--rose); animation: wheel 1.6s ease infinite; }
+    @keyframes wheel { 0%{opacity:0;transform:translate(-50%,0)} 40%{opacity:1} 100%{opacity:0;transform:translate(-50%,10px)} }
+
+    @keyframes rise { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:translateY(0)} }
     @keyframes shimmer { to { background-position: 200% center; } }
-    header p { color: var(--text-soft); font-weight: 500; max-width: 520px; margin: 0 auto; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.55;transform:scale(1.5)} }
 
     /* ════════ ZONA DE SCROLL (el scroll conduce el carrusel) ════════ */
     .stage-zone { position: relative; height: calc(100vh + 8 * 52vh); z-index: 2; }
@@ -194,7 +245,11 @@
     footer { text-align: center; padding: 40px 24px 70px; font-size: 0.78rem; color: var(--text-soft); position: relative; z-index: 2; }
 
     /* Fallback sin animaciones: fila con scroll horizontal nativo */
+    @media (max-width: 600px) { h1.hub-title { font-size: 2.1rem; } }
     @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; }
+      .hero { height: 100dvh; }
+      .hero-content > *, .scroll-hint { opacity: 1 !important; }
       .stage-zone { height: auto; }
       .stage-sticky { position: static; height: auto; overflow: visible; padding: 30px 0; }
       .deck { display: flex; gap: 20px; overflow-x: auto; height: auto; padding: 10px 24px; scroll-snap-type: x mandatory; }
@@ -207,22 +262,37 @@
   <canvas id="cards-gl"></canvas>
   <div class="grain"></div>
 
-  <nav class="view-switch" aria-label="Cambiar vista">
-    <a href="index.html" class="is-on" aria-current="page">
-      <svg viewBox="0 0 24 24"><rect x="3" y="6" width="6" height="12" rx="1.5"/><rect x="10.5" y="4" width="6" height="16" rx="1.5"/><rect x="18" y="7" width="4" height="10" rx="1.5"/></svg>
-      <span>Carrusel</span>
-    </a>
-    <a href="cuadricula.html">
-      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg>
-      <span>Ver todos</span>
-    </a>
-  </nav>
+  <!-- ══ HERO ══ -->
+  <section class="hero">
+    <div class="hero-sticky">
+    <canvas id="hero-gl"></canvas>
+    <div class="hero-content">
+      <p class="eyebrow"><span class="dot"></span> Minsait Business Consulting · Perú</p>
+      <h1 class="hub-title">COE <span class="accent">IA</span> MBC</h1>
+      <p class="hub-tagline">
+        Cada herramienta, un&nbsp;<span class="role-rotator"><span>
+          <b class="r-atlas">explorador.</b><b class="r-holmes">detective.</b><b class="r-tailor">artesano.</b>
+          <b class="r-tempo">guardián.</b><b class="r-midas">banquero.</b><b class="r-trace">arquitecto.</b>
+          <b class="r-echo">oyente.</b><b class="r-sigma">evaluador.</b><b class="r-scribe">escriba.</b><b class="r-atlas">explorador.</b>
+        </span></span>
+      </p>
+    </div>
+    <div class="scroll-hint"><span class="mouse"></span> Explora</div>
+    </div>
+  </section>
 
-  <header>
-    <p class="eyebrow"><span class="dot"></span> Minsait Business Consulting · Perú</p>
-    <h1>COE <span class="accent">IA</span> MBC</h1>
-    <p>Cada herramienta, un especialista. Haz scroll para recorrer el ecosistema — cada paso trae una al frente.</p>
-  </header>
+  <div class="view-switch-bar">
+    <nav class="view-switch" aria-label="Cambiar vista">
+      <a href="index.html" class="is-on" aria-current="page">
+        <svg viewBox="0 0 24 24"><rect x="3" y="6" width="6" height="12" rx="1.5"/><rect x="10.5" y="4" width="6" height="16" rx="1.5"/><rect x="18" y="7" width="4" height="10" rx="1.5"/></svg>
+        <span>Carrusel</span>
+      </a>
+      <a href="cuadricula.html">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg>
+        <span>Ver todos</span>
+      </a>
+    </nav>
+  </div>
 
   <section class="stage-zone" id="zone">
     <div class="stage-sticky">
@@ -332,10 +402,126 @@
 
   <script type="module">
     import * as THREE from 'three';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+    import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+    import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+    import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+    import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
     import { SVGLoader } from 'three/addons/loaders/SVGLoader.js';
 
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const DPR = Math.min(window.devicePixelRatio || 1, 2);
+
+    /* ═══════════════ HERO 3D ═══════════════ */
+    (function heroScene() {
+      const canvas = document.getElementById('hero-gl');
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+      renderer.setPixelRatio(DPR);
+      renderer.setSize(innerWidth, innerHeight);
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.15;
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, 0.1, 100);
+      camera.position.set(0, 0, 6.2);
+
+      const knot = new THREE.Mesh(
+        new THREE.TorusKnotGeometry(1.25, 0.4, 260, 40, 2, 3),
+        new THREE.MeshStandardMaterial({ color: 0x6a1a44, metalness: 0.85, roughness: 0.28, emissive: 0x2a0a3a, emissiveIntensity: 0.45 })
+      );
+      scene.add(knot);
+      scene.add(new THREE.Mesh(new THREE.IcosahedronGeometry(0.9, 3), new THREE.MeshBasicMaterial({ color: 0x3a1550, transparent: true, opacity: 0.12, wireframe: true })));
+
+      scene.add(new THREE.AmbientLight(0x1a0b2e, 0.6));
+      const lights = [
+        { c: 0xff0054, r: 4.2, s: 0.9, o: 0 }, { c: 0x41B9FF, r: 4.0, s: -0.7, o: 2.1 },
+        { c: 0x9b4dff, r: 3.6, s: 0.55, o: 4.2 }, { c: 0xf0a818, r: 3.2, s: -0.4, o: 1.0 },
+      ].map(cfg => { const l = new THREE.PointLight(cfg.c, 90, 14, 2); scene.add(l); return { light: l, ...cfg }; });
+
+      const COUNT = reduce ? 400 : 1400;
+      const pos = new Float32Array(COUNT * 3), col = new Float32Array(COUNT * 3);
+      const pal = [0xff0054, 0xff6a9e, 0x41B9FF, 0x9b4dff].map(h => new THREE.Color(h));
+      for (let i = 0; i < COUNT; i++) {
+        const r = 3 + Math.random() * 7, th = Math.random() * Math.PI * 2, ph = Math.acos(2 * Math.random() - 1);
+        pos[i*3] = r*Math.sin(ph)*Math.cos(th); pos[i*3+1] = r*Math.sin(ph)*Math.sin(th)*0.7; pos[i*3+2] = r*Math.cos(ph);
+        const c = pal[(Math.random()*pal.length)|0]; col[i*3]=c.r; col[i*3+1]=c.g; col[i*3+2]=c.b;
+      }
+      const pGeo = new THREE.BufferGeometry();
+      pGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+      pGeo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+      const points = new THREE.Points(pGeo, new THREE.PointsMaterial({ size: 0.045, vertexColors: true, transparent: true, opacity: 0.85, depthWrite: false, blending: THREE.AdditiveBlending }));
+      scene.add(points);
+
+      const composer = new EffectComposer(renderer);
+      composer.addPass(new RenderPass(scene, camera));
+      const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.6, 0.5, 0.22);
+      composer.addPass(bloom);
+      composer.addPass(new OutputPass());
+
+      const controls = new OrbitControls(camera, canvas);
+      controls.enableZoom = false; controls.enablePan = false; controls.enableDamping = true; controls.dampingFactor = 0.06;
+      controls.autoRotate = !reduce; controls.autoRotateSpeed = 0.7; controls.rotateSpeed = 0.5;
+
+      const mouse = { x: 0, y: 0 };
+      addEventListener('pointermove', e => { mouse.x = (e.clientX/innerWidth-0.5)*2; mouse.y = (e.clientY/innerHeight-0.5)*2; }, { passive: true });
+      addEventListener('resize', () => {
+        camera.aspect = innerWidth/innerHeight; camera.updateProjectionMatrix();
+        renderer.setSize(innerWidth, innerHeight); composer.setSize(innerWidth, innerHeight);
+      }, { passive: true });
+
+      // ── progreso de scroll (transición dinámica hero → tarjetas) ──
+      const heroEl = document.querySelector('.hero');
+      const contentEl = document.querySelector('.hero-content');
+      const hintEl = document.querySelector('.scroll-hint');
+      const clamp = v => v < 0 ? 0 : v > 1 ? 1 : v;
+      let visible = true, pTarget = 0, p = 0;
+      new IntersectionObserver(([e]) => { visible = e.isIntersecting; }, { threshold: 0.01 }).observe(heroEl);
+      function onScrollHero() {
+        if (reduce) { pTarget = 0; return; }
+        pTarget = clamp(scrollY / Math.max(1, heroEl.offsetHeight - innerHeight));
+      }
+      addEventListener('scroll', onScrollHero, { passive: true });
+      onScrollHero();
+
+      const heroClock = new THREE.Clock();
+      (function loop() {
+        requestAnimationFrame(loop);
+        if (!visible && p > 0.99) return;
+        p += (pTarget - p) * 0.12;
+        const t = heroClock.getElapsedTime();
+
+        // giro base + aceleración por scroll
+        knot.rotation.y = t * 0.12 + p * 3.2;
+        knot.rotation.z = t * 0.05;
+        points.rotation.y = t * 0.02 + p * 0.6;
+
+        // "sumergirse": escala + acercamiento + expansión de partículas + bloom (contenido)
+        knot.scale.setScalar(1 + p * 0.85);
+        points.scale.setScalar(1 + p * 1.6);
+        bloom.strength = 0.6 + p * 0.4;
+
+        // disolver el lienzo al final del recorrido → se funde con el switch/carrusel
+        const fade = p < 0.55 ? 1 : Math.max(0, 1 - (p - 0.55) / 0.35);
+        canvas.style.opacity = fade.toFixed(3);
+        canvas.style.pointerEvents = fade < 0.35 ? 'none' : '';
+
+        lights.forEach(L => L.light.position.set(Math.cos(t*L.s+L.o)*L.r, Math.sin((t*L.s+L.o)*0.8)*2.4, Math.sin(t*L.s+L.o)*L.r));
+
+        knot.position.x += (mouse.x * 0.35 - knot.position.x) * 0.04;
+        knot.position.y += (-mouse.y * 0.3 - knot.position.y) * 0.04;
+        knot.position.z = p * 1.1;
+        controls.autoRotateSpeed = 0.7 + p * 5;
+
+        // desvanece el contenido del hero
+        if (p > 0.005) {
+          contentEl.style.opacity = clamp(1 - p * 1.8);
+          contentEl.style.transform = `translateY(${-p * 70}px)`;
+        } else { contentEl.style.opacity = ''; contentEl.style.transform = ''; }
+        if (hintEl) hintEl.style.opacity = p > 0.02 ? clamp(1 - p * 4) : '';
+
+        controls.update(); composer.render();
+      })();
+    })();
 
     /* ════════ CARRUSEL CONDUCIDO POR SCROLL ════════ */
     const zone = document.getElementById('zone');
