@@ -96,7 +96,7 @@
     #hero-gl {
       position: absolute; inset: 0;
       width: 100%; height: 100%;
-      z-index: 0; cursor: grab; touch-action: none;
+      z-index: 0; cursor: grab; touch-action: pan-y;
     }
     #hero-gl:active { cursor: grabbing; }
     .hero-content { position: relative; z-index: 3; pointer-events: none; will-change: transform, opacity; margin-top: 16vh; }
@@ -137,9 +137,9 @@
     .r-midas{color:#ffd76b}.r-trace{color:#b2a5ff}.r-echo{color:#7fd8ff}.r-sigma{color:#b2a5ff}.r-scribe{color:#ff9d5c}
 
     .scroll-hint {
-      position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 3;
+      position: absolute; bottom: 30px; left: 0; right: 0; margin: 0 auto; width: max-content; z-index: 3;
       font-size: 10px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(239,230,245,0.4);
-      display: inline-flex; flex-direction: column; align-items: center; gap: 10px;
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
       opacity: 0; animation: rise 0.7s var(--ease-out) 1s forwards;
     }
     .scroll-hint .mouse { width: 22px; height: 34px; border: 2px solid rgba(239,230,245,0.35); border-radius: 12px; position: relative; }
@@ -149,6 +149,65 @@
     @keyframes rise { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:translateY(0)} }
     @keyframes shimmer { to { background-position: 200% center; } }
     @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.55;transform:scale(1.5)} }
+
+    /* ════════ SECCIÓN LAPTOP → ZOOM → CARRUSEL ════════ */
+    .laptop-zone { position: relative; height: 210vh; z-index: 2; }
+    .laptop-sticky {
+      position: sticky; top: 0; height: 100vh; height: 100dvh; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .laptop-scene {
+      position: relative; width: min(760px, 86vw);
+      transform-origin: 50% 41%; will-change: transform, opacity;
+    }
+    .laptop-screen {
+      position: relative; aspect-ratio: 16 / 10; border-radius: 16px;
+      background: radial-gradient(120% 120% at 30% 20%, #2a0713 0%, #12040c 55%, #0a0308 100%);
+      border: 2px solid #34121f;
+      box-shadow: 0 0 0 2px rgba(255,0,84,0.12), 0 50px 130px -30px rgba(255,0,84,0.45), inset 0 0 70px rgba(0,0,0,0.65);
+      overflow: hidden;
+    }
+    .scr-glow { position: absolute; border-radius: 50%; filter: blur(38px); pointer-events: none; }
+    .scr-glow.g-magenta { width: 46%; height: 60%; left: 8%; top: 24%; background: radial-gradient(circle, rgba(255,0,84,0.55), transparent 70%); animation: glowpulse 5s ease-in-out infinite; }
+    .scr-glow.g-cyan { width: 40%; height: 55%; right: 4%; top: 6%; background: radial-gradient(circle, rgba(65,185,255,0.4), transparent 70%); animation: glowpulse 6.5s ease-in-out infinite reverse; }
+    @keyframes glowpulse { 0%,100%{opacity:0.75;transform:scale(1)} 50%{opacity:1;transform:scale(1.08)} }
+    .scr-code {
+      position: absolute; left: 7%; top: 12%; width: 62%;
+      font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+      font-size: clamp(9px, 1.5vw, 14px); line-height: 1.85; letter-spacing: 0.01em;
+      color: rgba(255,120,170,0.9); text-shadow: 0 0 8px rgba(255,0,84,0.45);
+    }
+    .scr-code .c-key { color: #ff2d6f; } .scr-code .c-str { color: #5fd0ff; } .scr-code .c-fn { color: #ff9ecb; } .scr-code .c-cmt { color: rgba(255,255,255,0.32); }
+    .scr-code .cursor { color: #41B9FF; animation: blink 1s steps(2) infinite; }
+    @keyframes blink { 0%,50%{opacity:1} 50.01%,100%{opacity:0} }
+    .scr-dots { position: absolute; right: 6%; bottom: 12%; width: 30%; height: 40%;
+      background-image: radial-gradient(rgba(255,0,84,0.85) 1.4px, transparent 1.6px);
+      background-size: 12px 12px; opacity: 0.5; -webkit-mask-image: linear-gradient(120deg, transparent, #000); mask-image: linear-gradient(120deg, transparent, #000); }
+    /* portal central: lo que se abre al hacer zoom */
+    .scr-portal {
+      position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 8px; opacity: 0; text-align: center;
+      background: radial-gradient(60% 60% at 50% 50%, rgba(255,0,84,0.22), transparent 72%);
+    }
+    .scr-portal-label { font-size: clamp(1.4rem, 5vw, 2.6rem); font-weight: 900; letter-spacing: -0.03em;
+      background: linear-gradient(120deg,#ff0054,#ff6a9e 45%,#41B9FF); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 40px rgba(255,0,84,0.5); }
+    .scr-portal-sub { font-size: 0.7rem; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(239,230,245,0.7); }
+    .laptop-hinge { height: 8px; margin: 0 22%; background: linear-gradient(180deg,#3a1622,#1a0a12); border-radius: 0 0 6px 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.6); }
+    .laptop-base {
+      height: 16px; width: 120%; margin-left: -10%;
+      background: linear-gradient(180deg,#2c141e 0%,#12080f 100%);
+      border-radius: 4px 4px 12px 12px;
+      transform: perspective(760px) rotateX(70deg); transform-origin: top center;
+      box-shadow: 0 30px 50px -18px rgba(0,0,0,0.85), inset 0 2px 4px rgba(255,255,255,0.05);
+    }
+    .laptop-base::after { content: ""; position: absolute; left: 42%; top: 3px; width: 16%; height: 4px; border-radius: 3px; background: rgba(255,255,255,0.08); }
+    .laptop-caption {
+      position: absolute; bottom: 34px; left: 50%; transform: translateX(-50%);
+      font-size: 10px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(239,230,245,0.42);
+      display: inline-flex; align-items: center; gap: 8px; white-space: nowrap;
+    }
+    .laptop-caption svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; animation: bob 1.6s ease infinite; }
 
     /* ════════ ZONA DE SCROLL (el scroll conduce el carrusel) ════════ */
     .stage-zone { position: relative; height: calc(100vh + 8 * 52vh); z-index: 2; }
@@ -250,6 +309,8 @@
       *, *::before, *::after { animation: none !important; }
       .hero { height: 100dvh; }
       .hero-content > *, .scroll-hint { opacity: 1 !important; }
+      .laptop-zone { height: auto; }
+      .laptop-sticky { position: static; height: auto; padding: 50px 0; }
       .stage-zone { height: auto; }
       .stage-sticky { position: static; height: auto; overflow: visible; padding: 30px 0; }
       .deck { display: flex; gap: 20px; overflow-x: auto; height: auto; padding: 10px 24px; scroll-snap-type: x mandatory; }
@@ -293,6 +354,36 @@
       </a>
     </nav>
   </div>
+
+  <!-- ══ LAPTOP → ZOOM → CARRUSEL ══ -->
+  <section class="laptop-zone">
+    <div class="laptop-sticky">
+      <div class="laptop-scene">
+        <div class="laptop">
+          <div class="laptop-screen">
+            <div class="scr-glow g-magenta"></div>
+            <div class="scr-glow g-cyan"></div>
+            <div class="scr-dots"></div>
+            <div class="scr-code">
+              <div><span class="c-key">const</span> coe = <span class="c-fn">MBC</span>.init();</div>
+              <div>coe.load(<span class="c-str">'holmes'</span>, <span class="c-str">'tailor'</span>, <span class="c-str">'trace'</span>);</div>
+              <div>coe.load(<span class="c-str">'atlas'</span>, <span class="c-str">'echo'</span>, <span class="c-str">'scribe'</span>);</div>
+              <div>coe.load(<span class="c-str">'tempo'</span>, <span class="c-str">'midas'</span>, <span class="c-str">'sigma'</span>);</div>
+              <div><span class="c-key">await</span> coe.deploy(); <span class="c-cmt">// 9 especialistas</span></div>
+              <div>▸ ecosistema listo <span class="cursor">▮</span></div>
+            </div>
+            <div class="scr-portal">
+              <span class="scr-portal-label">COE IA MBC</span>
+              <span class="scr-portal-sub">Abriendo el ecosistema</span>
+            </div>
+          </div>
+          <div class="laptop-hinge"></div>
+          <div class="laptop-base"></div>
+        </div>
+      </div>
+      <div class="laptop-caption"><svg viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></svg> Baja para entrar al ecosistema</div>
+    </div>
+  </section>
 
   <section class="stage-zone" id="zone">
     <div class="stage-sticky">
@@ -462,6 +553,22 @@
       controls.enableZoom = false; controls.enablePan = false; controls.enableDamping = true; controls.dampingFactor = 0.06;
       controls.autoRotate = !reduce; controls.autoRotateSpeed = 0.7; controls.rotateSpeed = 0.5;
 
+      // En móvil: arrastre vertical = scroll de la página; horizontal/diagonal = girar el Hero
+      const finePointer = matchMedia('(pointer: fine)').matches;
+      controls.enabled = finePointer;              // OrbitControls solo con mouse; el autoRotate sigue activo
+      let manualYaw = 0;
+      if (!finePointer) {
+        canvas.style.touchAction = 'pan-y';        // permite el scroll vertical nativo
+        let sx = 0, sy = 0, px = 0, gmode = null;
+        canvas.addEventListener('touchstart', e => { const tt = e.touches[0]; sx = px = tt.clientX; sy = tt.clientY; gmode = null; }, { passive: true });
+        canvas.addEventListener('touchmove', e => {
+          const tt = e.touches[0]; const dx = tt.clientX - sx, dy = tt.clientY - sy;
+          if (gmode === null && (Math.abs(dx) > 6 || Math.abs(dy) > 6)) gmode = Math.abs(dx) > Math.abs(dy) ? 'rot' : 'scroll';
+          if (gmode === 'rot') { manualYaw += (tt.clientX - px) * 0.008; e.preventDefault(); }
+          px = tt.clientX;
+        }, { passive: false });
+      }
+
       const mouse = { x: 0, y: 0 };
       addEventListener('pointermove', e => { mouse.x = (e.clientX/innerWidth-0.5)*2; mouse.y = (e.clientY/innerHeight-0.5)*2; }, { passive: true });
       addEventListener('resize', () => {
@@ -490,8 +597,8 @@
         p += (pTarget - p) * 0.12;
         const t = heroClock.getElapsedTime();
 
-        // giro base + aceleración por scroll
-        knot.rotation.y = t * 0.12 + p * 3.2;
+        // giro base + aceleración por scroll + arrastre horizontal manual (móvil)
+        knot.rotation.y = t * 0.12 + p * 3.2 + manualYaw;
         knot.rotation.z = t * 0.05;
         points.rotation.y = t * 0.02 + p * 0.6;
 
@@ -520,6 +627,34 @@
         if (hintEl) hintEl.style.opacity = p > 0.02 ? clamp(1 - p * 4) : '';
 
         controls.update(); composer.render();
+      })();
+    })();
+
+    /* ═══════════════ LAPTOP → ZOOM (conducido por scroll) ═══════════════ */
+    (function laptopZoom() {
+      const zone = document.querySelector('.laptop-zone');
+      const scene = document.querySelector('.laptop-scene');
+      const portal = document.querySelector('.scr-portal');
+      const caption = document.querySelector('.laptop-caption');
+      if (!zone || !scene || reduce) return;
+      const clamp = v => v < 0 ? 0 : v > 1 ? 1 : v;
+      let p = 0, pt = 0;
+      function onScroll() { pt = clamp(-zone.getBoundingClientRect().top / Math.max(1, zone.offsetHeight - innerHeight)); }
+      addEventListener('scroll', onScroll, { passive: true });
+      addEventListener('resize', onScroll, { passive: true });
+      onScroll();
+      (function loop() {
+        requestAnimationFrame(loop);
+        // solo trabaja cuando la sección está cerca de la vista
+        const r = zone.getBoundingClientRect();
+        if (r.bottom < -50 || r.top > innerHeight + 50) { p += (pt - p) * 0.12; return; }
+        p += (pt - p) * 0.12;
+        // fase 1 (0→0.45): acercamiento suave · fase 2 (0.45→1): zoom fuerte a la pantalla
+        const zoom = p < 0.45 ? 1 + p * 0.55 : 1.25 + Math.pow((p - 0.45) / 0.55, 2) * 9.5;
+        scene.style.transform = `scale(${zoom.toFixed(3)})`;
+        scene.style.opacity = (p < 0.82 ? 1 : clamp(1 - (p - 0.82) / 0.16)).toFixed(3);
+        portal.style.opacity = clamp((p - 0.35) / 0.4).toFixed(3);
+        if (caption) caption.style.opacity = clamp(1 - p * 3).toFixed(3);
       })();
     })();
 
