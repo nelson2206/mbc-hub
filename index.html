@@ -107,15 +107,16 @@
       line-height: 1.5; font-weight: 500; opacity: 0; animation: rise 0.7s var(--ease-out) 0.42s forwards;
     }
     .role-rotator { display: inline-flex; vertical-align: bottom; height: 1.5em; overflow: hidden; position: relative; font-weight: 800; color: var(--text); }
-    .role-rotator span { display: block; animation: roll 14s var(--ease-out) infinite; }
+    .role-rotator span { display: block; animation: roll 16s var(--ease-out) infinite; }
     @keyframes roll {
-      0%,9%{transform:translateY(0)} 12.5%,21.5%{transform:translateY(-1.5em)} 25%,34%{transform:translateY(-3em)}
-      37.5%,46.5%{transform:translateY(-4.5em)} 50%,59%{transform:translateY(-6em)} 62.5%,71.5%{transform:translateY(-7.5em)}
-      75%,84%{transform:translateY(-9em)} 87.5%,96.5%{transform:translateY(-10.5em)} 100%{transform:translateY(-12em)}
+      0%,8%{transform:translateY(0)} 11.11%,19.11%{transform:translateY(-1.5em)} 22.22%,30.22%{transform:translateY(-3em)}
+      33.33%,41.33%{transform:translateY(-4.5em)} 44.44%,52.44%{transform:translateY(-6em)} 55.56%,63.56%{transform:translateY(-7.5em)}
+      66.67%,74.67%{transform:translateY(-9em)} 77.78%,85.78%{transform:translateY(-10.5em)} 88.89%,96.89%{transform:translateY(-12em)}
+      100%{transform:translateY(-13.5em)}
     }
     .role-rotator b { display:block; height: 1.5em; font-weight: 800; }
     .r-atlas{color:#ff5c8a}.r-holmes{color:#d76aa6}.r-tailor{color:#4fe0bc}.r-tempo{color:#ffcf5a}
-    .r-midas{color:#ffd76b}.r-trace{color:#b2a5ff}.r-echo{color:#7fd8ff}.r-sigma{color:#b2a5ff}
+    .r-midas{color:#ffd76b}.r-trace{color:#b2a5ff}.r-echo{color:#7fd8ff}.r-sigma{color:#b2a5ff}.r-scribe{color:#ff9d5c}
 
     .scroll-hint {
       position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 3;
@@ -222,6 +223,7 @@
     .card[data-char="trace"]  { color:#b2a5ff } .card[data-char="trace"]  .char-name,.card[data-char="trace"]  .tool-label{color:#b2a5ff}
     .card[data-char="echo"]   { color:#7fd8ff } .card[data-char="echo"]   .char-name,.card[data-char="echo"]   .tool-label{color:#7fd8ff}
     .card[data-char="sigma"]  { color:#b2a5ff } .card[data-char="sigma"]  .char-name,.card[data-char="sigma"]  .tool-label{color:#b2a5ff}
+    .card[data-char="scribe"] { color:#ff9d5c } .card[data-char="scribe"] .char-name,.card[data-char="scribe"] .tool-label{color:#ff9d5c}
 
     footer { position: relative; z-index: 2; text-align: center; padding: 20px 24px 60px; font-size: 0.78rem; color: var(--text-soft); }
     footer .sep { margin: 0 8px; opacity: 0.4; }
@@ -256,7 +258,7 @@
         Cada herramienta, un&nbsp;<span class="role-rotator"><span>
           <b class="r-atlas">explorador.</b><b class="r-holmes">detective.</b><b class="r-tailor">artesano.</b>
           <b class="r-tempo">guardián.</b><b class="r-midas">banquero.</b><b class="r-trace">arquitecto.</b>
-          <b class="r-echo">oyente.</b><b class="r-sigma">evaluador.</b><b class="r-atlas">explorador.</b>
+          <b class="r-echo">oyente.</b><b class="r-sigma">evaluador.</b><b class="r-scribe">escriba.</b><b class="r-atlas">explorador.</b>
         </span></span>
       </p>
     </div>
@@ -268,7 +270,7 @@
   <section class="tools">
     <div class="section-head">
       <span class="kicker">El ecosistema</span>
-      <h2>Ocho especialistas, un solo lugar</h2>
+      <h2>Nueve especialistas, un solo lugar</h2>
       <p>Pasa el cursor sobre cada uno para activarlo.</p>
     </div>
     <main>
@@ -277,7 +279,7 @@
         <div class="group-head">
           <span class="g-label"><span class="g-dot" style="background:#ff5c8a;box-shadow:0 0 12px #ff5c8a"></span> Para consultores</span>
           <span class="g-line"></span>
-          <span class="g-count">5 herramientas</span>
+          <span class="g-count">6 herramientas</span>
         </div>
         <div class="grid">
           <a class="card" href="https://nelson2206.github.io/slides_qa/" data-char="holmes">
@@ -323,6 +325,16 @@
               <div class="char-name">Echo</div><div class="char-role">El Oyente</div><div class="divider"></div>
               <div class="tool-label">Reseñas de Apps</div>
               <p class="card-desc">Escucha la voz del cliente en App Store y Google Play: busca cualquier app, extrae reseñas y analiza temas y ratings.</p>
+              <span class="card-cta">Entrar <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+            </div>
+          </a>
+          <a class="card" href="https://github.com/nelson2206/minutas-pmo-antamina" data-char="scribe">
+            <span class="badge-beta">Beta</span>
+            <div class="char-stage"><div class="ring"></div></div>
+            <div class="card-body">
+              <div class="char-name">Scribe</div><div class="char-role">El Escriba</div><div class="divider"></div>
+              <div class="tool-label">Minutas PMO</div>
+              <p class="card-desc">Asiste a cada reunión y no olvida ningún compromiso. Convierte transcripciones de Teams en minutas accionables y hace seguimiento a los acuerdos.</p>
               <span class="card-cta">Entrar <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
             </div>
           </a>
@@ -720,6 +732,47 @@
             return g;
           },
           sub(o, dt, t, hover) { const sp = hover ? 4 : 1.6; o.userData.checks.forEach((c, i) => { const w = Math.max(0, Math.sin(t * sp - i * 1.0)); c.scale.setScalar(1 + w * 0.35); }); },
+        },
+        // SCRIBE · pluma redactando la minuta línea por línea
+        scribe: {
+          l1: 0xffb066, l2: 0xff5c8a, faceFront: true,
+          build() {
+            const g = new THREE.Group();
+            // hoja de minuta
+            const paper = new THREE.Group();
+            paper.add(box(1.08, 1.4, 0.05, metal(0xf5ecdc, 0x2a1508, 0.08, 0.7)));
+            const tb = box(0.6, 0.1, 0.03, metal(0xff9d5c, 0x4a2408, 0.35, 0.45)); tb.position.set(-0.16, 0.56, 0.04); paper.add(tb);
+            const lines = []; const lineYs = [0.3, 0.08, -0.14, -0.36];
+            lineYs.forEach((y, i) => {
+              const ln = box(0.74 - (i % 2) * 0.12, 0.05, 0.03, metal(0xd8b090, 0x3a1c08, 0.2, 0.6));
+              ln.position.set(-0.03 - (i % 2) * 0.06, y, 0.04); paper.add(ln); lines.push(ln);
+            });
+            // check de compromiso cumplido
+            const chk = box(0.14, 0.14, 0.04, metal(0x22c55e, 0x0e3a1e, 0.3, 0.5)); chk.position.set(0.34, -0.58, 0.04); paper.add(chk);
+            paper.position.x = -0.1; paper.rotation.z = 0.04; g.add(paper);
+            // pluma estilográfica (punta en el origen del grupo)
+            const pen = new THREE.Group();
+            const nib = new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.18, 14), metal(0xf5ecdc, 0x333333, 0.6, 0.3));
+            nib.position.y = 0.09; nib.rotation.z = Math.PI; pen.add(nib);
+            const bodyP = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.05, 0.62, 14), metal(0xff9d5c, 0x4a2408));
+            bodyP.position.y = 0.49; pen.add(bodyP);
+            const cap = new THREE.Mesh(new THREE.SphereGeometry(0.065, 14, 14), metal(0xffd0a0, 0x4a2408));
+            cap.position.y = 0.82; pen.add(cap);
+            pen.rotation.z = -0.45; pen.position.set(-0.4, 0.35, 0.14); g.add(pen);
+            g.userData.pen = pen; g.userData.lines = lines; g.userData.chk = chk; g.userData.lineYs = lineYs;
+            return g;
+          },
+          sub(o, dt, t, hover) {
+            const sp = hover ? 2.2 : 0.9;
+            const ph = (t * 0.28 * sp) % 4;                 // línea actual (0-3) con avance continuo
+            const li = Math.floor(ph), fx = ph - li;
+            o.userData.pen.position.x = -0.5 + fx * 0.72;   // barrido de izquierda a derecha
+            o.userData.pen.position.y = o.userData.lineYs[li] + 0.03;
+            o.userData.pen.rotation.z = -0.45 + Math.sin(t * 8 * sp) * 0.045; // trazo
+            o.userData.lines.forEach((ln, i) => { ln.material.emissiveIntensity = i < li ? 0.85 : (i === li ? 0.3 + fx * 0.55 : 0.2); });
+            const w = Math.max(0, Math.sin(t * (hover ? 3 : 1.4)));
+            o.userData.chk.scale.setScalar(1 + w * 0.3);
+          },
         },
       };
 
