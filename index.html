@@ -521,7 +521,7 @@
       renderer.setPixelRatio(DPR);
       renderer.setSize(innerWidth, innerHeight);
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
-      renderer.toneMappingExposure = 1.15;
+      renderer.toneMappingExposure = 1.0;
 
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, 0.1, 100);
@@ -529,7 +529,7 @@
 
       const knot = new THREE.Mesh(
         new THREE.TorusKnotGeometry(1.25, 0.4, 260, 40, 2, 3),
-        new THREE.MeshStandardMaterial({ color: 0x6a1a44, metalness: 0.85, roughness: 0.28, emissive: 0x2a0a3a, emissiveIntensity: 0.45 })
+        new THREE.MeshStandardMaterial({ color: 0x6a1a44, metalness: 0.85, roughness: 0.28, emissive: 0x2a0a3a, emissiveIntensity: 0.3 })
       );
       scene.add(knot);
       scene.add(new THREE.Mesh(new THREE.IcosahedronGeometry(0.9, 3), new THREE.MeshBasicMaterial({ color: 0x3a1550, transparent: true, opacity: 0.12, wireframe: true })));
@@ -538,7 +538,7 @@
       const lights = [
         { c: 0xff0054, r: 4.2, s: 0.9, o: 0 }, { c: 0x41B9FF, r: 4.0, s: -0.7, o: 2.1 },
         { c: 0x9b4dff, r: 3.6, s: 0.55, o: 4.2 }, { c: 0xf0a818, r: 3.2, s: -0.4, o: 1.0 },
-      ].map(cfg => { const l = new THREE.PointLight(cfg.c, 90, 14, 2); scene.add(l); return { light: l, ...cfg }; });
+      ].map(cfg => { const l = new THREE.PointLight(cfg.c, 62, 14, 2); scene.add(l); return { light: l, ...cfg }; });
 
       const COUNT = reduce ? 400 : 1400;
       const pos = new Float32Array(COUNT * 3), col = new Float32Array(COUNT * 3);
@@ -551,12 +551,12 @@
       const pGeo = new THREE.BufferGeometry();
       pGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
       pGeo.setAttribute('color', new THREE.BufferAttribute(col, 3));
-      const points = new THREE.Points(pGeo, new THREE.PointsMaterial({ size: 0.045, vertexColors: true, transparent: true, opacity: 0.85, depthWrite: false, blending: THREE.AdditiveBlending }));
+      const points = new THREE.Points(pGeo, new THREE.PointsMaterial({ size: 0.045, vertexColors: true, transparent: true, opacity: 0.68, depthWrite: false, blending: THREE.AdditiveBlending }));
       scene.add(points);
 
       const composer = new EffectComposer(renderer);
       composer.addPass(new RenderPass(scene, camera));
-      const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.6, 0.5, 0.22);
+      const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.42, 0.5, 0.26);
       composer.addPass(bloom);
       composer.addPass(new OutputPass());
 
@@ -616,7 +616,7 @@
         // "sumergirse": escala + acercamiento + expansión de partículas + bloom (contenido)
         knot.scale.setScalar(1 + p * 0.85);
         points.scale.setScalar(1 + p * 1.6);
-        bloom.strength = 0.6 + p * 0.4;
+        bloom.strength = 0.42 + p * 0.32;
 
         // disolver el lienzo al final del recorrido → se funde con el switch/carrusel
         const fade = p < 0.55 ? 1 : Math.max(0, 1 - (p - 0.55) / 0.35);
