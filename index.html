@@ -649,11 +649,22 @@
       onScrollHero();
 
       const heroClock = new THREE.Clock();
+      let fpsT0 = 0, fpsN = 0;
       (function loop() {
+        if (document.documentElement.classList.contains('no3d')) return;   // degradado: detener el hero 3D
         requestAnimationFrame(loop);
         if (!visible && p > 0.99) return;
         p += (pTarget - p) * 0.12;
         const t = heroClock.getElapsedTime();
+        // watchdog de rendimiento: si el equipo corre a tirones (< 24 fps sostenidos), caer a la cuadrícula estática
+        if (t > 0.6 && !document.hidden) {
+          if (fpsT0 <= 0) { fpsT0 = t; fpsN = 0; }
+          fpsN++;
+          if (t - fpsT0 >= 1.5) {
+            if (fpsN / (t - fpsT0) < 24) document.documentElement.classList.add('no3d');
+            fpsT0 = 1e9;
+          }
+        } else if (fpsT0 > 0 && fpsT0 < 1e9) { fpsT0 = 0; }
 
         // giro base + aceleración por scroll + arrastre horizontal manual (móvil)
         knot.rotation.y = t * 0.12 + p * 3.2 + manualYaw;
@@ -724,10 +735,11 @@
     // tarjetas en penumbra: click = traerlas al frente (SOLO en carrusel). En cuadrícula/degradado el link navega normal.
     cards.forEach((c, i) => {
       c.addEventListener('click', e => {
-        if (!document.documentElement.classList.contains('no3d') &&
-            document.body.classList.contains('mode-carrusel') && !c.classList.contains('is-active')) {
-          e.preventDefault(); scrollToIndex(i);
-        }
+        // cuadrícula/degradado: el link navega normal
+        if (document.documentElement.classList.contains('no3d') || !document.body.classList.contains('mode-carrusel')) return;
+        // si la tarjeta ya está (casi) centrada, abrir el link; si es vecina, traerla al centro primero
+        if (parseFloat(c.dataset.ad || '99') < 0.8) return;
+        e.preventDefault(); scrollToIndex(i);
       });
     });
 
@@ -1096,6 +1108,7 @@
       let curW = 0, curH = 0;
       const clock = new THREE.Clock();
       (function loop() {
+        if (document.documentElement.classList.contains('no3d')) return;   // degradado: no gastar GPU en las tarjetas 3D
         requestAnimationFrame(loop);
         const dt = Math.min(clock.getDelta(), 0.05);
         const t = clock.elapsedTime;
