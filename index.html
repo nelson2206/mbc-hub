@@ -323,6 +323,28 @@
     body.mode-grid .card::after { display: none; }
     @keyframes grid-in { from { opacity: 0; transform: translateY(26px) scale(0.96); } to { opacity: 1; transform: none; } }
 
+    /* ════════ MODO DEGRADADO (sin WebGL / 3D no cargó) — cuadrícula estática que SIEMPRE funciona ════════ */
+    html.no3d #hero-gl { display: none !important; }
+    html.no3d .hero { height: auto; }
+    html.no3d .hero-sticky { position: static; height: auto; overflow: visible; padding: 56px 24px 24px; }
+    html.no3d .hero-content { margin-top: 0; }
+    html.no3d .hero-content > *, html.no3d .scroll-hint { opacity: 1 !important; animation: none !important; }
+    html.no3d .scroll-hint, html.no3d .view-switch-bar, html.no3d .progress, html.no3d .scroll-cue { display: none !important; }
+    html.no3d .laptop-overlay { display: none !important; }
+    html.no3d .stage-zone { height: auto !important; }
+    html.no3d .stage-sticky { position: static; height: auto; overflow: visible; display: block; padding: 8px 0 0; }
+    html.no3d .group-tag { margin: 0 auto 26px; }
+    html.no3d .deck {
+      position: relative; height: auto; width: auto; max-width: 1180px; margin: 0 auto; padding: 0 24px;
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 22px;
+      transform: none !important; opacity: 1 !important;
+    }
+    html.no3d .card {
+      position: relative; left: auto; top: auto; width: auto;
+      transform: none !important; opacity: 1 !important; --dim: 0 !important;
+    }
+    html.no3d .card::after, html.no3d .card-cv { display: none !important; }
+
     /* Fallback sin animaciones: fila con scroll horizontal nativo */
     @media (max-width: 600px) { h1.hub-title { font-size: 2.1rem; } }
     @media (prefers-reduced-motion: reduce) {
@@ -496,6 +518,23 @@
 
   <footer>COE IA MBC · Minsait Business Consulting · Perú · Cada herramienta, un especialista</footer>
 
+  <script>
+    /* Guardián de compatibilidad (script clásico: corre aunque el CDN esté bloqueado o falten módulos ES).
+       Si no hay WebGL, o si el 3D no avisa "listo" en 3.5s (CDN bloqueado / error de módulo),
+       cae a la cuadrícula estática que siempre funciona. */
+    (function () {
+      function degradar() { document.documentElement.classList.add('no3d'); }
+      var ok = false;
+      try {
+        var c = document.createElement('canvas');
+        ok = !!(window.WebGLRenderingContext && (c.getContext('webgl2') || c.getContext('webgl') || c.getContext('experimental-webgl')));
+      } catch (e) { ok = false; }
+      if (!ok) { degradar(); return; }
+      window.__hub3dReady = false;
+      setTimeout(function () { if (!window.__hub3dReady) degradar(); }, 3500);
+    })();
+  </script>
+
   <script type="importmap">
   { "imports": {
       "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
@@ -518,7 +557,14 @@
     /* ═══════════════ HERO 3D ═══════════════ */
     (function heroScene() {
       const canvas = document.getElementById('hero-gl');
-      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+      let renderer;
+      try {
+        renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+      } catch (e) {
+        document.documentElement.classList.add('no3d');   // WebGL falló: cae a cuadrícula estática
+        return;
+      }
+      window.__hub3dReady = true;                          // el 3D arrancó: cancela el guardián
       renderer.setPixelRatio(DPR);
       renderer.setSize(innerWidth, innerHeight);
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -675,10 +721,13 @@
       window.scrollTo({ top: top + f * total, behavior: 'smooth' });
     }
 
-    // tarjetas en penumbra: click = traerlas al frente (no navegar)
+    // tarjetas en penumbra: click = traerlas al frente (SOLO en carrusel). En cuadrícula/degradado el link navega normal.
     cards.forEach((c, i) => {
       c.addEventListener('click', e => {
-        if (!c.classList.contains('is-active')) { e.preventDefault(); scrollToIndex(i); }
+        if (!document.documentElement.classList.contains('no3d') &&
+            document.body.classList.contains('mode-carrusel') && !c.classList.contains('is-active')) {
+          e.preventDefault(); scrollToIndex(i);
+        }
       });
     });
 
@@ -697,7 +746,7 @@
 
       (function layout() {
         requestAnimationFrame(layout);
-        if (document.body.classList.contains('mode-grid')) return;   // en cuadrícula manda el CSS grid
+        if (document.documentElement.classList.contains('no3d') || document.body.classList.contains('mode-grid')) return;   // cuadrícula/degradado: manda el CSS
 
         // ── INTRO: la laptop se disuelve, luego el carrusel real aparece chiquito y crece (reversible) ──
         if (overlay) {
@@ -783,7 +832,10 @@
     /* ════════ OBJETOS 3D POR IDENTIDAD (renderer compartido) ════════ */
     (function cardScenes() {
       const canvas = document.getElementById('cards-gl');
-      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+      let renderer;
+      try {
+        renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+      } catch (e) { return; }   // sin iconos 3D en las tarjetas, pero el hub sigue usable
       renderer.setPixelRatio(1);
       const CDPR = Math.min(DPR, 1.75);
 
