@@ -14,7 +14,7 @@
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="COE IA MBC · Minsait Business Consulting" />
   <meta property="og:title" content="COE IA MBC — El ecosistema de herramientas de MBC" />
-  <meta property="og:description" content="Cada herramienta, un especialista. Onboarding, Slides QA, CVs, Vacaciones, Control Financiero, Process IQ, Reseñas, Entrevistas y Minutas — todo en un solo lugar." />
+  <meta property="og:description" content="Cada herramienta, un especialista. Onboarding, Slides QA, CVs, Vacaciones, Control Financiero, Process IQ, Reseñas, Entrevistas, Minutas y Analítica — todo en un solo lugar." />
   <meta property="og:url" content="https://nelson2206.github.io/mbc-hub/" />
   <meta property="og:image" content="https://nelson2206.github.io/mbc-hub/og-image.png?v=1" />
   <meta property="og:image:width" content="1200" />
@@ -32,1105 +32,187 @@
   <script defer src="https://umami-mbc.vercel.app/script.js" data-website-id="3fa47089-2ca1-49e8-9933-1ee6a9990e0e"></script>
   <style>
     :root {
-      --bg-0: #0b0410;
-      --bg-1: #160a26;
-      --rose: #ff0054;
-      --cyan: #41B9FF;
-      --cream: #f5ecdc;
-      --text: #efe6f5;
-      --text-soft: rgba(239,230,245,0.62);
-      --glass: rgba(24,12,38,0.62);
-      --glass-brd: rgba(255,255,255,0.09);
+      --bg-0: #0b0410; --bg-1: #160a26;
+      --rose: #ff0054; --pink: #ff6a9e; --cyan: #41B9FF;
+      --text: #efe6f5; --text-soft: rgba(239,230,245,0.62); --muted: rgba(239,230,245,0.42);
+      --glass: rgba(24,12,38,0.55); --glass-brd: rgba(255,255,255,0.09);
       --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
-      --card-w: clamp(300px, 34vw, 420px);
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: 'Inter', system-ui, sans-serif;
+      font-family: 'Inter', system-ui, -apple-system, "Segoe UI", sans-serif;
       background:
         radial-gradient(120% 70% at 50% -5%, #38154f 0%, transparent 55%),
-        radial-gradient(90% 60% at 85% 8%, #40122e 0%, transparent 45%),
-        linear-gradient(180deg, var(--bg-1) 0%, var(--bg-0) 40%, #08030d 100%);
+        radial-gradient(90% 60% at 88% 6%, #40122e 0%, transparent 45%),
+        linear-gradient(180deg, var(--bg-1) 0%, var(--bg-0) 42%, #08030d 100%);
       background-attachment: fixed;
-      color: var(--text);
+      color: var(--text); -webkit-font-smoothing: antialiased; min-height: 100dvh;
       overflow-x: hidden;
-      -webkit-font-smoothing: antialiased;
     }
+    a { color: inherit; text-decoration: none; }
+
+    /* aura suave que respira (CSS puro, solo opacity/transform) */
+    .aura { position: fixed; inset: -20% 0 auto; height: 70vh; z-index: 0; pointer-events: none;
+      background: radial-gradient(50% 60% at 50% 30%, rgba(255,0,84,0.16), transparent 60%),
+                  radial-gradient(45% 55% at 70% 20%, rgba(65,185,255,0.12), transparent 60%); }
+    @media (prefers-reduced-motion: no-preference) { .aura { animation: breathe 12s var(--ease-out) infinite alternate; } }
+    @keyframes breathe { from { opacity: .7; transform: translateY(-10px) scale(1); } to { opacity: 1; transform: translateY(10px) scale(1.06); } }
+
     .grain {
-      position: fixed; inset: 0; z-index: 40; pointer-events: none;
-      opacity: 0.05; mix-blend-mode: overlay;
+      position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: 0.045; mix-blend-mode: overlay;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     }
-    /* buffer WebGL compartido (offscreen); cada tarjeta pinta su propio lienzo 2D */
-    #cards-gl { position: fixed; left: -99999px; top: 0; width: 8px; height: 8px; pointer-events: none; }
-    .card-cv { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; }
 
-    /* ════════ SWITCH DE VISTA (despues del Hero, sticky al hacer scroll) ════════ */
-    .view-switch-bar {
-      position: sticky; top: 14px; z-index: 60;
-      display: flex; justify-content: center; padding: 0 24px; pointer-events: none;
-    }
-    .view-switch {
-      pointer-events: auto; display: inline-flex; gap: 4px; padding: 5px;
-      background: rgba(20,10,32,0.72); border: 1px solid var(--glass-brd);
-      border-radius: 9999px; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-      box-shadow: 0 12px 34px -14px rgba(0,0,0,0.7);
-    }
-    .view-switch a {
-      display: inline-flex; align-items: center; gap: 7px;
-      font-size: 11px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase;
-      color: var(--text-soft); text-decoration: none;
-      padding: 8px 15px; border-radius: 9999px; transition: color .3s, background .3s;
-    }
-    .view-switch a svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; }
-    .view-switch a.is-on { color: #fff; background: linear-gradient(135deg, var(--rose), #ff6a9e); box-shadow: 0 4px 14px -4px rgba(255,0,84,0.6); }
-    .view-switch a:not(.is-on):hover { color: var(--text); background: rgba(255,255,255,0.06); }
-    @media (max-width: 480px) { .view-switch a { padding: 8px 12px; font-size: 10px; } .view-switch a span { display: none; } }
+    .wrap { position: relative; z-index: 2; max-width: 1200px; margin: 0 auto; padding: 0 22px 90px; }
 
-    /* ════════ HERO 3D ════════ */
-    .hero { position: relative; height: 180vh; }
-    .hero-sticky {
-      position: sticky; top: 0; z-index: 5;
-      height: 100vh; height: 100dvh; overflow: hidden;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      text-align: center; padding: 24px;
-    }
-    #hero-gl {
-      position: absolute; inset: 0;
-      width: 100%; height: 100%;
-      z-index: 0; cursor: grab; touch-action: pan-y;
-    }
-    #hero-gl:active { cursor: grabbing; }
-    .hero-content { position: relative; z-index: 3; pointer-events: none; will-change: transform, opacity; margin-top: 16vh; }
-    .hero-content > * { pointer-events: auto; }
+    /* ── hero ── */
+    header.hero { text-align: center; padding: clamp(56px, 12vh, 130px) 0 46px; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 9px; font-size: 10.5px; font-weight: 800; letter-spacing: 0.24em; text-transform: uppercase; color: var(--text-soft); padding: 8px 16px; border-radius: 9999px; background: rgba(255,255,255,0.04); border: 1px solid var(--glass-brd); backdrop-filter: blur(8px); }
+    .eyebrow .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--rose); box-shadow: 0 0 12px var(--rose); }
+    @media (prefers-reduced-motion: no-preference) { .eyebrow .dot { animation: pulse 2.2s ease infinite; } }
+    h1.title { font-size: clamp(2.4rem, 8vw, 5rem); font-weight: 900; letter-spacing: -0.045em; line-height: 0.98; margin: 22px 0 14px; text-shadow: 0 2px 30px rgba(11,4,16,0.8); }
+    h1.title .ia { background: linear-gradient(120deg, var(--rose), var(--pink) 45%, var(--cyan)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+    .tagline { color: var(--text-soft); font-size: clamp(15px, 2.4vw, 19px); font-weight: 500; }
+    .tagline b { color: var(--text); font-weight: 700; }
 
-    .eyebrow {
-      display: inline-flex; align-items: center; gap: 9px;
-      font-size: 10px; font-weight: 800; letter-spacing: 0.26em; text-transform: uppercase;
-      color: var(--text-soft); margin-bottom: 22px; padding: 8px 16px; border-radius: 9999px;
-      background: rgba(255,255,255,0.04); border: 1px solid var(--glass-brd); backdrop-filter: blur(8px);
-      opacity: 0; animation: rise 0.7s var(--ease-out) 0.2s forwards;
-    }
-    .eyebrow .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--rose); box-shadow: 0 0 14px var(--rose); animation: pulse 2.2s ease infinite; }
-    h1.hub-title {
-      font-size: clamp(2.1rem, 6.5vw, 4.8rem); font-weight: 900; letter-spacing: -0.04em; line-height: 0.95;
-      margin-bottom: 16px; opacity: 0; animation: rise 0.8s var(--ease-out) 0.3s forwards;
-      text-shadow: 0 2px 24px rgba(11,4,16,0.85), 0 0 60px rgba(255,0,84,0.22);
-    }
-    h1.hub-title .accent {
-      background: linear-gradient(120deg, #ff0054 0%, #ff6a9e 45%, #41B9FF 100%); background-size: 200% auto;
-      -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-      animation: shimmer 6s linear infinite;
-    }
-    .hub-tagline {
-      font-size: clamp(1rem, 2vw, 1.28rem); color: var(--text-soft); max-width: 540px; margin: 0 auto;
-      line-height: 1.5; font-weight: 500; opacity: 0; animation: rise 0.7s var(--ease-out) 0.42s forwards;
-    }
-    .role-rotator { display: inline-flex; vertical-align: bottom; height: 1.5em; overflow: hidden; position: relative; font-weight: 800; color: var(--text); }
-    .role-rotator span { display: block; animation: roll 16s var(--ease-out) infinite; }
-    @keyframes roll {
-      0%,8%{transform:translateY(0)} 11.11%,19.11%{transform:translateY(-1.5em)} 22.22%,30.22%{transform:translateY(-3em)}
-      33.33%,41.33%{transform:translateY(-4.5em)} 44.44%,52.44%{transform:translateY(-6em)} 55.56%,63.56%{transform:translateY(-7.5em)}
-      66.67%,74.67%{transform:translateY(-9em)} 77.78%,85.78%{transform:translateY(-10.5em)} 88.89%,96.89%{transform:translateY(-12em)}
-      100%{transform:translateY(-13.5em)}
-    }
-    .role-rotator b { display:block; height: 1.5em; font-weight: 800; }
-    .r-atlas{color:#ff5c8a}.r-holmes{color:#d76aa6}.r-tailor{color:#4fe0bc}.r-tempo{color:#ffcf5a}
-    .r-midas{color:#ffd76b}.r-trace{color:#b2a5ff}.r-echo{color:#7fd8ff}.r-sigma{color:#b2a5ff}.r-scribe{color:#ff9d5c}
+    /* ── secciones / grupos ── */
+    .group { margin-top: 40px; }
+    .group-tag { display: inline-flex; align-items: center; gap: 9px; font-size: 11px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-soft); margin-bottom: 18px; }
+    .group-tag .gd { width: 8px; height: 8px; border-radius: 50%; box-shadow: 0 0 12px currentColor; }
 
-    .scroll-hint {
-      position: absolute; bottom: 30px; left: 0; right: 0; margin: 0 auto; width: max-content; z-index: 3;
-      font-size: 10px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(239,230,245,0.4);
-      display: flex; flex-direction: column; align-items: center; gap: 10px;
-      opacity: 0; animation: rise 0.7s var(--ease-out) 1s forwards;
-    }
-    .scroll-hint .mouse { width: 22px; height: 34px; border: 2px solid rgba(239,230,245,0.35); border-radius: 12px; position: relative; }
-    .scroll-hint .mouse::after { content:""; position:absolute; top:6px; left:50%; transform:translateX(-50%); width:3px; height:6px; border-radius:2px; background: var(--rose); animation: wheel 1.6s ease infinite; }
-    @keyframes wheel { 0%{opacity:0;transform:translate(-50%,0)} 40%{opacity:1} 100%{opacity:0;transform:translate(-50%,10px)} }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
 
-    @keyframes rise { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:translateY(0)} }
-    @keyframes shimmer { to { background-position: 200% center; } }
-    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.55;transform:scale(1.5)} }
+    /* ── tarjeta ── */
+    .card { position: relative; display: flex; flex-direction: column; gap: 4px; background: var(--glass); border: 1px solid var(--glass-brd); border-radius: 18px; padding: 22px; backdrop-filter: blur(12px); box-shadow: 0 16px 44px -30px rgba(0,0,0,0.9); transition: transform .22s var(--ease-out), border-color .22s var(--ease-out), box-shadow .22s var(--ease-out); }
+    .card:active { transform: scale(0.985); }
+    @media (hover: hover) { .card:hover { transform: translateY(-5px); border-color: var(--c); box-shadow: 0 26px 60px -30px rgba(0,0,0,0.95); } .card:hover .cta { gap: 11px; } .card:hover .ico { box-shadow: 0 0 26px -6px var(--c); } }
 
-    /* ════════ LAPTOP → ZOOM (capa sobre el carrusel) ════════ */
-    .laptop-overlay {
-      position: absolute; inset: 0; z-index: 500;
-      display: flex; align-items: center; justify-content: center;
-      background: linear-gradient(180deg, #160a26 0%, #0b0410 55%, #08030d 100%);
-      will-change: opacity;
-    }
-    .laptop-scene {
-      position: relative; width: min(720px, 88vw);
-      transform-origin: 50% 40%; will-change: transform, opacity;
-    }
-    /* Tapa / marco plateado claro (para que la laptop se vea) */
-    .laptop-lid {
-      position: relative; aspect-ratio: 16 / 10; border-radius: 20px; padding: 3.1%;
-      background: linear-gradient(155deg, #c9ccd6 0%, #aeb3c0 52%, #969cab 100%);
-      box-shadow: 0 48px 120px -28px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.28) inset, 0 2px 3px rgba(255,255,255,0.5) inset;
-    }
-    .laptop-cam { position: absolute; top: 1.5%; left: 50%; transform: translateX(-50%); width: 6px; height: 6px; border-radius: 50%; background: #2a2a30; box-shadow: 0 0 0 2px rgba(0,0,0,0.12); }
-    /* Pantalla clara */
-    .laptop-screen {
-      position: relative; height: 100%; border-radius: 10px; overflow: hidden;
-      background: radial-gradient(130% 130% at 50% 0%, #d9d4e6 0%, #ccc6dd 58%, #bfb8d3 100%);
-      box-shadow: inset 0 0 0 1.5px rgba(30,10,40,0.14), inset 0 0 44px rgba(80,50,120,0.12);
-    }
-    .scr-topbar {
-      position: absolute; top: 0; left: 0; right: 0; height: 15%;
-      display: flex; align-items: center; gap: 6px; padding: 0 3.5%;
-      background: rgba(210,203,226,0.55); border-bottom: 1px solid rgba(30,10,40,0.1);
-    }
-    .scr-topbar .d { width: 7px; height: 7px; border-radius: 50%; }
-    .scr-brand { margin-left: auto; margin-right: auto; font-size: clamp(8px,1.4vw,13px); font-weight: 900; letter-spacing: -0.02em; color: #2a0e1a; }
-    .scr-brand b { background: linear-gradient(120deg,#ff0054,#ff6a9e 50%,#41B9FF); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
-    .scr-body {
-      position: absolute; left: 0; right: 0; top: 15%; bottom: 0;
-      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3%;
-    }
-    .scr-mark { font-size: clamp(1.4rem, 5vw, 2.8rem); font-weight: 900; letter-spacing: -0.035em; color: #2a0e1a; }
-    .scr-mark b { background: linear-gradient(120deg,#ff0054,#ff6a9e 50%,#41B9FF); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
-    .scr-sub { font-size: clamp(8px, 1.5vw, 12px); font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(42,14,26,0.5); display: inline-flex; align-items: center; gap: 8px; }
-    .scr-sub::before, .scr-sub::after { content: ""; width: 18px; height: 2px; border-radius: 2px; background: rgba(255,0,84,0.4); }
-    .laptop-hinge { height: 1.6%; min-height: 6px; margin: 0 19%; background: linear-gradient(180deg,#c6cad4,#9aa0ac); border-radius: 0 0 5px 5px; }
-    .laptop-base {
-      position: relative; height: 2.4%; min-height: 15px; width: 118%; margin-left: -9%;
-      background: linear-gradient(180deg, #eaecf1 0%, #bcc1cc 42%, #949aa6 100%);
-      border-radius: 4px 4px 13px 13px;
-      transform: perspective(820px) rotateX(67deg); transform-origin: top center;
-      box-shadow: 0 34px 56px -18px rgba(0,0,0,0.6), inset 0 2px 3px rgba(255,255,255,0.75);
-    }
-    .laptop-base::after { content: ""; position: absolute; left: 40%; top: 20%; width: 20%; height: 40%; border-radius: 4px; background: linear-gradient(180deg,#d2d6de,#aab0bc); box-shadow: inset 0 1px 2px rgba(0,0,0,0.18); }
-    .laptop-caption {
-      position: absolute; bottom: 34px; left: 0; right: 0; margin: 0 auto; width: max-content;
-      font-size: 10px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(239,230,245,0.5);
-      display: flex; align-items: center; gap: 8px; white-space: nowrap;
-    }
-    .laptop-caption svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; animation: bob 1.6s ease infinite; }
+    .ico { width: 54px; height: 54px; border-radius: 15px; display: grid; place-items: center; font-size: 27px; line-height: 1; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-brd); box-shadow: 0 0 20px -8px var(--c); margin-bottom: 14px; transition: box-shadow .22s var(--ease-out); }
+    .cname { font-size: 17px; font-weight: 800; letter-spacing: -0.01em; }
+    .cname .role { color: var(--muted); font-weight: 600; font-size: 13px; }
+    .ctool { font-size: 12px; font-weight: 700; letter-spacing: .02em; color: var(--c); margin: 3px 0 9px; }
+    .cdesc { font-size: 13px; line-height: 1.5; color: var(--text-soft); flex: 1; }
+    .cta { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 700; color: var(--text); margin-top: 16px; transition: gap .22s var(--ease-out); }
+    .cta svg { width: 17px; height: 17px; stroke: var(--c); fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    .beta { position: absolute; top: 16px; right: 16px; font-size: 9.5px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--pink); background: rgba(255,106,158,0.12); border: 1px solid rgba(255,106,158,0.3); padding: 3px 8px; border-radius: 9999px; }
 
-    /* ════════ ZONA DE SCROLL (intro laptop + carrusel) ════════ */
-    .stage-zone { position: relative; height: 640vh; z-index: 2; }
-    .stage-sticky {
-      position: sticky; top: 0; height: 100vh; height: 100dvh;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      overflow: hidden; gap: 26px;
-    }
-    .group-tag {
-      display: inline-flex; align-items: center; gap: 10px;
-      font-size: 11px; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase;
-      border: 1px solid var(--glass-brd); border-radius: 9999px; padding: 7px 16px;
-      background: rgba(255,255,255,0.04); backdrop-filter: blur(8px);
-      transition: color 0.4s var(--ease-out);
-    }
-    .group-tag .gd { width: 8px; height: 8px; border-radius: 50%; transition: background 0.4s, box-shadow 0.4s; }
+    footer { text-align: center; color: var(--muted); font-size: 12px; margin-top: 56px; }
+    footer b { color: var(--text-soft); font-weight: 700; }
 
-    .deck { position: relative; width: 100%; height: min(560px, 66vh); transform-origin: 50% 50%; will-change: transform, opacity; }
-
-    /* ════════ CARD ════════ */
-    .card {
-      position: absolute; left: 50%; top: 50%;
-      width: var(--card-w);
-      display: flex; flex-direction: column;
-      border-radius: 26px; border: 1px solid var(--glass-brd);
-      overflow: hidden; text-decoration: none; color: inherit;
-      box-shadow: 0 24px 60px -26px rgba(0,0,0,0.8);
-      will-change: transform;
-      --dim: 0;
+    /* ── entrada escalonada (CSS puro) ── */
+    @media (prefers-reduced-motion: no-preference) {
+      .eyebrow, h1.title, .tagline, .group { opacity: 0; animation: rise .6s var(--ease-out) forwards; }
+      h1.title { animation-delay: .08s; } .tagline { animation-delay: .16s; }
+      .group:nth-of-type(1) { animation-delay: .22s; } .group:nth-of-type(2) { animation-delay: .30s; }
+      .card { opacity: 0; animation: rise .55s var(--ease-out) forwards; }
+      .grid .card:nth-child(1){animation-delay:.06s} .grid .card:nth-child(2){animation-delay:.12s}
+      .grid .card:nth-child(3){animation-delay:.18s} .grid .card:nth-child(4){animation-delay:.24s}
+      .grid .card:nth-child(5){animation-delay:.30s} .grid .card:nth-child(6){animation-delay:.36s}
     }
-    /* velo que opaca las tarjetas en segundo plano (cubre también la ventana 3D) */
-    .card::after {
-      content: ""; position: absolute; inset: 0; z-index: 20; pointer-events: none;
-      background: #0b0410; opacity: var(--dim);
-      border-radius: inherit;
-      transition: none;
-    }
-    .card.is-active { border-color: rgba(255,0,84,0.6); box-shadow: 0 46px 110px -26px rgba(255,0,84,0.55), 0 0 0 1px rgba(255,0,84,0.28); }
-    .card:not(.is-active) { cursor: pointer; }
-
-    .char-stage { position: relative; height: 212px; background: radial-gradient(80% 90% at 50% 0%, rgba(255,255,255,0.05), transparent 70%); }
-    .char-stage .ring {
-      position: absolute; top: 50%; left: 50%; width: 150px; height: 150px; margin: -75px 0 0 -75px;
-      border: 1px dashed currentColor; border-radius: 50%; opacity: 0.13;
-      animation: spin 26s linear infinite; pointer-events: none;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .card-body {
-      padding: 20px 26px 24px; display: flex; flex-direction: column; flex: 1;
-      background: linear-gradient(180deg, rgba(20,10,32,0.35) 0%, var(--glass) 22%);
-      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-      border-top: 1px solid rgba(255,255,255,0.06);
-    }
-    .char-name { font-size: 1.5rem; font-weight: 900; letter-spacing: -0.025em; line-height: 1; margin-bottom: 3px; }
-    .char-role { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-soft); margin-bottom: 13px; }
-    .divider { height: 1px; background: rgba(255,255,255,0.08); margin-bottom: 12px; }
-    .tool-label { font-size: 0.66rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.16em; margin-bottom: 6px; opacity: 0.85; }
-    .card-desc { font-size: 0.84rem; line-height: 1.55; color: var(--text-soft); flex: 1; margin-bottom: 15px; }
-    .card-cta { display: inline-flex; align-items: center; gap: 6px; font-size: 0.74rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--rose); transition: gap 0.3s var(--ease-out); }
-    .card.is-active:hover .card-cta { gap: 12px; }
-    .card-cta svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.5; }
-    .badge-beta {
-      position: absolute; top: 13px; right: 13px; z-index: 8; font-size: 9px; font-weight: 900;
-      letter-spacing: 0.14em; text-transform: uppercase; color: #fff;
-      background: linear-gradient(135deg, #f0a818, var(--rose)); padding: 4px 10px; border-radius: 9999px;
-      box-shadow: 0 4px 14px -3px rgba(255,0,84,0.45);
-    }
-    .card[data-char="atlas"]  { color:#ff5c8a } .card[data-char="atlas"]  .char-name,.card[data-char="atlas"]  .tool-label{color:#ff5c8a}
-    .card[data-char="holmes"] { color:#d76aa6 } .card[data-char="holmes"] .char-name,.card[data-char="holmes"] .tool-label{color:#d76aa6}
-    .card[data-char="tailor"] { color:#4fe0bc } .card[data-char="tailor"] .char-name,.card[data-char="tailor"] .tool-label{color:#4fe0bc}
-    .card[data-char="tempo"]  { color:#ffcf5a } .card[data-char="tempo"]  .char-name,.card[data-char="tempo"]  .tool-label{color:#ffcf5a}
-    .card[data-char="midas"]  { color:#ffd76b } .card[data-char="midas"]  .char-name,.card[data-char="midas"]  .tool-label{color:#ffd76b}
-    .card[data-char="trace"]  { color:#b2a5ff } .card[data-char="trace"]  .char-name,.card[data-char="trace"]  .tool-label{color:#b2a5ff}
-    .card[data-char="echo"]   { color:#7fd8ff } .card[data-char="echo"]   .char-name,.card[data-char="echo"]   .tool-label{color:#7fd8ff}
-    .card[data-char="sigma"]  { color:#b2a5ff } .card[data-char="sigma"]  .char-name,.card[data-char="sigma"]  .tool-label{color:#b2a5ff}
-    .card[data-char="scribe"] { color:#ff9d5c } .card[data-char="scribe"] .char-name,.card[data-char="scribe"] .tool-label{color:#ff9d5c}
-
-    /* ════════ PROGRESO ════════ */
-    .progress { display: flex; align-items: center; gap: 10px; }
-    .progress .dot-i {
-      width: 8px; height: 8px; border-radius: 9999px;
-      background: rgba(255,255,255,0.18);
-      transition: width 0.35s var(--ease-out), background 0.35s;
-      cursor: pointer;
-    }
-    .progress .dot-i.on { width: 26px; background: var(--rose); box-shadow: 0 0 12px rgba(255,0,84,0.6); }
-    .scroll-cue {
-      font-size: 10px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase;
-      color: rgba(239,230,245,0.4); display: inline-flex; align-items: center; gap: 8px;
-    }
-    .scroll-cue svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; animation: bob 1.6s ease infinite; }
-    @keyframes bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(4px)} }
-
-    footer { text-align: center; padding: 40px 24px 70px; font-size: 0.78rem; color: var(--text-soft); position: relative; z-index: 2; }
-
-    /* ════════ MODO CUADRÍCULA ("Ver todos") — mismo mazo, re-maquetado, sin recargar ════════ */
-    body.mode-grid .laptop-overlay,
-    body.mode-grid .progress,
-    body.mode-grid .scroll-cue { display: none !important; }
-    body.mode-grid .stage-zone { height: auto !important; }
-    body.mode-grid .stage-sticky { position: static; height: auto; overflow: visible; display: block; padding: 8px 0 0; }
-    body.mode-grid .group-tag { margin: 0 auto 26px; }
-    body.mode-grid .deck {
-      position: relative; height: auto; width: auto;
-      max-width: 1180px; margin: 0 auto; padding: 0 24px;
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 22px;
-    }
-    body.mode-grid .card {
-      position: relative; left: auto; top: auto; width: auto;
-      transform: none !important; opacity: 1 !important; --dim: 0 !important;
-      animation: grid-in 0.6s var(--ease-out) both;
-    }
-    body.mode-grid .card::after { display: none; }
-    @keyframes grid-in { from { opacity: 0; transform: translateY(26px) scale(0.96); } to { opacity: 1; transform: none; } }
-
-    /* ════════ MODO DEGRADADO (sin WebGL / 3D no cargó) — cuadrícula estática que SIEMPRE funciona ════════ */
-    html.no3d #hero-gl { display: none !important; }
-    html.no3d .hero { height: auto; }
-    html.no3d .hero-sticky { position: static; height: auto; overflow: visible; padding: 56px 24px 24px; }
-    html.no3d .hero-content { margin-top: 0; }
-    html.no3d .hero-content > *, html.no3d .scroll-hint { opacity: 1 !important; animation: none !important; }
-    html.no3d .scroll-hint, html.no3d .view-switch-bar, html.no3d .progress, html.no3d .scroll-cue { display: none !important; }
-    html.no3d .laptop-overlay { display: none !important; }
-    html.no3d .stage-zone { height: auto !important; }
-    html.no3d .stage-sticky { position: static; height: auto; overflow: visible; display: block; padding: 8px 0 0; }
-    html.no3d .group-tag { margin: 0 auto 26px; }
-    html.no3d .deck {
-      position: relative; height: auto; width: auto; max-width: 1180px; margin: 0 auto; padding: 0 24px;
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 22px;
-      transform: none !important; opacity: 1 !important;
-    }
-    html.no3d .card {
-      position: relative; left: auto; top: auto; width: auto;
-      transform: none !important; opacity: 1 !important; --dim: 0 !important;
-    }
-    html.no3d .card::after, html.no3d .card-cv { display: none !important; }
-
-    /* Fallback sin animaciones: fila con scroll horizontal nativo */
-    @media (max-width: 600px) { h1.hub-title { font-size: 2.1rem; } }
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { animation: none !important; }
-      .hero { height: 100dvh; }
-      .hero-content > *, .scroll-hint { opacity: 1 !important; }
-      .laptop-overlay { display: none; }
-      .stage-zone { height: auto; }
-      .stage-sticky { position: static; height: auto; overflow: visible; padding: 30px 0; }
-      .deck { display: flex; gap: 20px; overflow-x: auto; height: auto; padding: 10px 24px; scroll-snap-type: x mandatory; }
-      .card { position: static; transform: none !important; flex: 0 0 var(--card-w); scroll-snap-align: center; --dim: 0 !important; }
-      .scroll-cue, .progress { display: none; }
-    }
+    @keyframes rise { to { opacity: 1; transform: translateY(0); } }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.35} }
   </style>
 </head>
 <body>
-  <canvas id="cards-gl"></canvas>
+  <div class="aura"></div>
   <div class="grain"></div>
 
-  <!-- ══ HERO ══ -->
-  <section class="hero">
-    <div class="hero-sticky">
-    <canvas id="hero-gl"></canvas>
-    <div class="hero-content">
+  <div class="wrap">
+    <header class="hero">
       <p class="eyebrow"><span class="dot"></span> Minsait Business Consulting · Perú</p>
-      <h1 class="hub-title">COE <span class="accent">IA</span> MBC</h1>
-      <p class="hub-tagline">
-        Cada herramienta, un&nbsp;<span class="role-rotator"><span>
-          <b class="r-atlas">explorador.</b><b class="r-holmes">detective.</b><b class="r-tailor">artesano.</b>
-          <b class="r-tempo">guardián.</b><b class="r-midas">banquero.</b><b class="r-trace">arquitecto.</b>
-          <b class="r-echo">oyente.</b><b class="r-sigma">evaluador.</b><b class="r-scribe">escriba.</b><b class="r-atlas">explorador.</b>
-        </span></span>
-      </p>
-    </div>
-    <div class="scroll-hint"><span class="mouse"></span> Explora</div>
-    </div>
-  </section>
+      <h1 class="title">COE <span class="ia">IA</span> MBC</h1>
+      <p class="tagline">Cada herramienta, <b>un especialista</b>. El ecosistema de IA de MBC.</p>
+    </header>
 
-  <div class="view-switch-bar">
-    <nav class="view-switch" aria-label="Cambiar vista">
-      <a href="#" data-mode="carrusel" class="is-on" aria-current="page">
-        <svg viewBox="0 0 24 24"><rect x="3" y="6" width="6" height="12" rx="1.5"/><rect x="10.5" y="4" width="6" height="16" rx="1.5"/><rect x="18" y="7" width="4" height="10" rx="1.5"/></svg>
-        <span>Carrusel</span>
-      </a>
-      <a href="#" data-mode="grid" data-umami-event="ver-todos">
-        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg>
-        <span>Ver todos</span>
-      </a>
-    </nav>
+    <!-- ══ Para consultores ══ -->
+    <section class="group">
+      <div class="group-tag"><span class="gd" style="color:#ff5c8a"></span> Para consultores</div>
+      <div class="grid">
+        <a class="card" style="--c:#41B9FF" href="https://nelson2206.github.io/slides_qa/" data-char="holmes" data-umami-event="abrir-holmes">
+          <span class="ico">🔍</span>
+          <div class="cname">Holmes <span class="role">· El Detective</span></div>
+          <div class="ctool">Slides QA</div>
+          <p class="cdesc">Ninguna inconsistencia se le escapa. Audita presentaciones con criterio de senior manager MBB.</p>
+          <span class="cta">Entrar <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </a>
+        <a class="card" style="--c:#ff9d5c" href="https://resume-formatter-mbc-1.onrender.com/" data-char="tailor" data-umami-event="abrir-tailor">
+          <span class="ico">✂️</span>
+          <div class="cname">Tailor <span class="role">· El Artesano</span></div>
+          <div class="ctool">Formateador de CVs</div>
+          <p class="cdesc">Corta, da forma y presenta. Transforma cualquier currículum al formato corporativo Minsait en segundos.</p>
+          <span class="cta">Entrar <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </a>
+        <a class="card" style="--c:#9085e9" href="https://nelson2206.github.io/process-iq/" data-char="trace" data-umami-event="abrir-trace">
+          <span class="beta">Beta</span>
+          <span class="ico">🗺️</span>
+          <div class="cname">Trace <span class="role">· El Arquitecto</span></div>
+          <div class="ctool">Process IQ</div>
+          <p class="cdesc">Convierte el caos en claridad. Levanta, estructura y documenta flujos de negocio con inteligencia.</p>
+          <span class="cta">Entrar <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </a>
+        <a class="card" style="--c:#4ade80" href="https://nelson2206.github.io/mbc-onboarding/" data-char="atlas" data-umami-event="abrir-atlas">
+          <span class="ico">🧭</span>
+          <div class="cname">Atlas <span class="role">· El Explorador</span></div>
+          <div class="ctool">Onboarding MBC</div>
+          <p class="cdesc">Tu guía en el journey MBC. Navega cada semana, desbloquea misiones y conviértete en consultor de elite.</p>
+          <span class="cta">Entrar <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </a>
+        <a class="card" style="--c:#ff6a9e" href="https://nelson2206.github.io/app-reviews-scraper/" data-char="echo" data-umami-event="abrir-echo">
+          <span class="ico">⭐</span>
+          <div class="cname">Echo <span class="role">· El Oyente</span></div>
+          <div class="ctool">Reseñas de Apps</div>
+          <p class="cdesc">Escucha la voz del cliente en App Store y Google Play: extrae reseñas y analiza temas y ratings.</p>
+          <span class="cta">Entrar <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </a>
+        <a class="card" style="--c:#ffcf5a" href="https://nelson2206.github.io/minutas-pmo-antamina/" data-char="scribe" data-umami-event="abrir-scribe">
+          <span class="beta">Beta</span>
+          <span class="ico">🖊️</span>
+          <div class="cname">Scribe <span class="role">· El Escriba</span></div>
+          <div class="ctool">Minutas PMO</div>
+          <p class="cdesc">Asiste a cada reunión y no olvida ningún compromiso. Convierte transcripciones de Teams en minutas accionables.</p>
+          <span class="cta">Entrar <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </a>
+      </div>
+    </section>
+
+    <!-- ══ Administrativo ══ -->
+    <section class="group">
+      <div class="group-tag"><span class="gd" style="color:#ffcf5a"></span> Administrativo</div>
+      <div class="grid">
+        <a class="card" style="--c:#5ad1ff" href="https://nelson2206.github.io/mbc-vacations/" data-char="tempo" data-umami-event="abrir-tempo">
+          <span class="ico">📅</span>
+          <div class="cname">Tempo <span class="role">· El Guardián</span></div>
+          <div class="ctool">Control de Vacaciones</div>
+          <p class="cdesc">Cuida el balance del equipo. Gestiona ausencias, descansos y planificación de días libres.</p>
+          <span class="cta">Entrar <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </a>
+        <a class="card" style="--c:#ffc24b" href="https://minsait-control-financiero-demo.vercel.app/dashboard" data-char="midas" data-umami-event="abrir-midas">
+          <span class="beta">Beta</span>
+          <span class="ico">💰</span>
+          <div class="cname">Midas <span class="role">· El Banquero</span></div>
+          <div class="ctool">Control Financiero</div>
+          <p class="cdesc">Convierte cada cifra en oro. Forecast, reales, cargabilidad y cockpit P&amp;L del equipo Perú.</p>
+          <span class="cta">Entrar <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </a>
+        <a class="card" style="--c:#b491ff" href="https://mbc-entrevistas-tecnicas-app.vercel.app/login/admin" data-char="sigma" data-umami-event="abrir-sigma">
+          <span class="beta">Beta</span>
+          <span class="ico">🎓</span>
+          <div class="cname">Sigma <span class="role">· El Evaluador</span></div>
+          <div class="ctool">Entrevistas Técnicas</div>
+          <p class="cdesc">Mide el conocimiento técnico de data de cada postulante: exámenes, casos y scoring objetivo.</p>
+          <span class="cta">Entrar <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </a>
+        <a class="card" style="--c:#ff5c8a" href="https://pulse-mbc.vercel.app/" data-char="pulse" data-umami-event="abrir-pulse">
+          <span class="ico">📊</span>
+          <div class="cname">Pulse <span class="role">· El Vigía</span></div>
+          <div class="ctool">Adopción &amp; Analítica</div>
+          <p class="cdesc">Toma el pulso del ecosistema: cuántas personas entran a cada herramienta, desde qué países y a qué horas.</p>
+          <span class="cta">Entrar <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </a>
+      </div>
+    </section>
+
+    <footer>Un ecosistema de <b>COE IA · Minsait Business Consulting Perú</b></footer>
   </div>
-
-  <section class="stage-zone" id="zone">
-    <div class="stage-sticky">
-      <div class="group-tag"><span class="gd" id="gdot"></span><span id="glabel">Para consultores</span></div>
-
-      <div class="deck" id="deck">
-        <a class="card" href="https://nelson2206.github.io/slides_qa/" data-char="holmes" data-group="c" data-umami-event="abrir-holmes">
-          <div class="char-stage"><div class="ring"></div></div>
-          <div class="card-body">
-            <div class="char-name">Holmes</div><div class="char-role">El Detective</div><div class="divider"></div>
-            <div class="tool-label">Slides QA</div>
-            <p class="card-desc">Ninguna inconsistencia se le escapa. Audita presentaciones con criterio de senior manager MBB.</p>
-            <span class="card-cta">Entrar <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
-          </div>
-        </a>
-        <a class="card" href="https://resume-formatter-mbc-1.onrender.com/" data-char="tailor" data-group="c" data-umami-event="abrir-tailor">
-          <div class="char-stage"><div class="ring"></div></div>
-          <div class="card-body">
-            <div class="char-name">Tailor</div><div class="char-role">El Artesano</div><div class="divider"></div>
-            <div class="tool-label">Formateador de CVs</div>
-            <p class="card-desc">Corta, da forma y presenta. Transforma cualquier currículum al formato corporativo Minsait en segundos.</p>
-            <span class="card-cta">Entrar <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
-          </div>
-        </a>
-        <a class="card" href="https://nelson2206.github.io/process-iq/" data-char="trace" data-group="c" data-umami-event="abrir-trace">
-          <span class="badge-beta">Beta</span>
-          <div class="char-stage"><div class="ring"></div></div>
-          <div class="card-body">
-            <div class="char-name">Trace</div><div class="char-role">El Arquitecto</div><div class="divider"></div>
-            <div class="tool-label">Process IQ</div>
-            <p class="card-desc">Convierte el caos en claridad. Levanta, estructura y documenta flujos de negocio con inteligencia.</p>
-            <span class="card-cta">Entrar <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
-          </div>
-        </a>
-        <a class="card" href="https://nelson2206.github.io/mbc-onboarding/" data-char="atlas" data-group="c" data-umami-event="abrir-atlas">
-          <div class="char-stage"><div class="ring"></div></div>
-          <div class="card-body">
-            <div class="char-name">Atlas</div><div class="char-role">El Explorador</div><div class="divider"></div>
-            <div class="tool-label">Onboarding MBC</div>
-            <p class="card-desc">Tu guía en el journey MBC. Navega cada semana, desbloquea misiones y conviértete en consultor de elite.</p>
-            <span class="card-cta">Entrar <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
-          </div>
-        </a>
-        <a class="card" href="https://nelson2206.github.io/app-reviews-scraper/" data-char="echo" data-group="c" data-umami-event="abrir-echo">
-          <div class="char-stage"><div class="ring"></div></div>
-          <div class="card-body">
-            <div class="char-name">Echo</div><div class="char-role">El Oyente</div><div class="divider"></div>
-            <div class="tool-label">Reseñas de Apps</div>
-            <p class="card-desc">Escucha la voz del cliente en App Store y Google Play: extrae reseñas y analiza temas y ratings.</p>
-            <span class="card-cta">Entrar <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
-          </div>
-        </a>
-        <a class="card" href="https://nelson2206.github.io/minutas-pmo-antamina/" data-char="scribe" data-group="c" data-umami-event="abrir-scribe">
-          <span class="badge-beta">Beta</span>
-          <div class="char-stage"><div class="ring"></div></div>
-          <div class="card-body">
-            <div class="char-name">Scribe</div><div class="char-role">El Escriba</div><div class="divider"></div>
-            <div class="tool-label">Minutas PMO</div>
-            <p class="card-desc">Asiste a cada reunión y no olvida ningún compromiso. Convierte transcripciones de Teams en minutas accionables.</p>
-            <span class="card-cta">Entrar <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
-          </div>
-        </a>
-        <a class="card" href="https://nelson2206.github.io/mbc-vacations/" data-char="tempo" data-group="a" data-umami-event="abrir-tempo">
-          <div class="char-stage"><div class="ring"></div></div>
-          <div class="card-body">
-            <div class="char-name">Tempo</div><div class="char-role">El Guardián</div><div class="divider"></div>
-            <div class="tool-label">Control de Vacaciones</div>
-            <p class="card-desc">Cuida el balance del equipo. Gestiona ausencias, descansos y planificación de días libres.</p>
-            <span class="card-cta">Entrar <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
-          </div>
-        </a>
-        <a class="card" href="https://minsait-control-financiero-demo.vercel.app/dashboard" data-char="midas" data-group="a" data-umami-event="abrir-midas">
-          <span class="badge-beta">Beta</span>
-          <div class="char-stage"><div class="ring"></div></div>
-          <div class="card-body">
-            <div class="char-name">Midas</div><div class="char-role">El Banquero</div><div class="divider"></div>
-            <div class="tool-label">Control Financiero</div>
-            <p class="card-desc">Convierte cada cifra en oro. Forecast, reales, cargabilidad y cockpit P&amp;L del equipo Perú.</p>
-            <span class="card-cta">Entrar <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
-          </div>
-        </a>
-        <a class="card" href="https://mbc-entrevistas-tecnicas-app.vercel.app/login/admin" data-char="sigma" data-group="a" data-umami-event="abrir-sigma">
-          <span class="badge-beta">Beta</span>
-          <div class="char-stage"><div class="ring"></div></div>
-          <div class="card-body">
-            <div class="char-name">Sigma</div><div class="char-role">El Evaluador</div><div class="divider"></div>
-            <div class="tool-label">Entrevistas Técnicas</div>
-            <p class="card-desc">Mide el conocimiento técnico de data de cada postulante: exámenes, casos y scoring objetivo.</p>
-            <span class="card-cta">Entrar <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
-          </div>
-        </a>
-      </div>
-
-      <div class="progress" id="progress"></div>
-      <div class="scroll-cue"><svg viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></svg> Scroll para navegar</div>
-
-      <!-- capa laptop: cubre el carrusel al inicio y al hacer zoom se disuelve dejándolo a la vista -->
-      <div class="laptop-overlay" id="laptopOverlay">
-        <div class="laptop-scene">
-          <div class="laptop">
-            <div class="laptop-lid">
-              <span class="laptop-cam"></span>
-              <div class="laptop-screen">
-                <div class="scr-topbar">
-                  <span class="d" style="background:#ff5f57"></span><span class="d" style="background:#febc2e"></span><span class="d" style="background:#28c840"></span>
-                </div>
-                <div class="scr-body">
-                  <div class="scr-mark">COE <b>IA</b> MBC</div>
-                  <div class="scr-sub">El ecosistema</div>
-                </div>
-              </div>
-            </div>
-            <div class="laptop-hinge"></div>
-            <div class="laptop-base"></div>
-          </div>
-        </div>
-        <div class="laptop-caption"><svg viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></svg> Baja para entrar al ecosistema</div>
-      </div>
-    </div>
-  </section>
-
-  <footer>COE IA MBC · Minsait Business Consulting · Perú · Cada herramienta, un especialista</footer>
-
-  <script>
-    /* Guardián de compatibilidad (script clásico: corre aunque el CDN esté bloqueado o falten módulos ES).
-       Si no hay WebGL, o si el 3D no avisa "listo" en 3.5s (CDN bloqueado / error de módulo),
-       cae a la cuadrícula estática que siempre funciona. */
-    (function () {
-      function degradar() { document.documentElement.classList.add('no3d'); }
-      var ok = false;
-      try {
-        var c = document.createElement('canvas');
-        ok = !!(window.WebGLRenderingContext && (c.getContext('webgl2') || c.getContext('webgl') || c.getContext('experimental-webgl')));
-      } catch (e) { ok = false; }
-      if (!ok) { degradar(); return; }
-      window.__hub3dReady = false;
-      setTimeout(function () { if (!window.__hub3dReady) degradar(); }, 3500);
-    })();
-  </script>
-
-  <script type="importmap">
-  { "imports": {
-      "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-      "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
-  } }
-  </script>
-
-  <script type="module">
-    import * as THREE from 'three';
-    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-    import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
-    import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
-    import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
-    import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
-    import { SVGLoader } from 'three/addons/loaders/SVGLoader.js';
-
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const DPR = Math.min(window.devicePixelRatio || 1, 2);
-
-    /* ═══════════════ HERO 3D ═══════════════ */
-    (function heroScene() {
-      const canvas = document.getElementById('hero-gl');
-      let renderer;
-      try {
-        renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-      } catch (e) {
-        document.documentElement.classList.add('no3d');   // WebGL falló: cae a cuadrícula estática
-        return;
-      }
-      window.__hub3dReady = true;                          // el 3D arrancó: cancela el guardián
-      renderer.setPixelRatio(DPR);
-      renderer.setSize(innerWidth, innerHeight);
-      renderer.toneMapping = THREE.ACESFilmicToneMapping;
-      renderer.toneMappingExposure = 1.0;
-
-      const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, 0.1, 100);
-      camera.position.set(0, 0, 6.2);
-
-      const knot = new THREE.Mesh(
-        new THREE.TorusKnotGeometry(1.25, 0.4, 260, 40, 2, 3),
-        new THREE.MeshStandardMaterial({ color: 0x6a1a44, metalness: 0.85, roughness: 0.28, emissive: 0x2a0a3a, emissiveIntensity: 0.3 })
-      );
-      scene.add(knot);
-      scene.add(new THREE.Mesh(new THREE.IcosahedronGeometry(0.9, 3), new THREE.MeshBasicMaterial({ color: 0x3a1550, transparent: true, opacity: 0.12, wireframe: true })));
-
-      scene.add(new THREE.AmbientLight(0x1a0b2e, 0.6));
-      const lights = [
-        { c: 0xff0054, r: 4.2, s: 0.9, o: 0 }, { c: 0x41B9FF, r: 4.0, s: -0.7, o: 2.1 },
-        { c: 0x9b4dff, r: 3.6, s: 0.55, o: 4.2 }, { c: 0xf0a818, r: 3.2, s: -0.4, o: 1.0 },
-      ].map(cfg => { const l = new THREE.PointLight(cfg.c, 62, 14, 2); scene.add(l); return { light: l, ...cfg }; });
-
-      const COUNT = reduce ? 400 : 1400;
-      const pos = new Float32Array(COUNT * 3), col = new Float32Array(COUNT * 3);
-      const pal = [0xff0054, 0xff6a9e, 0x41B9FF, 0x9b4dff].map(h => new THREE.Color(h));
-      for (let i = 0; i < COUNT; i++) {
-        const r = 3 + Math.random() * 7, th = Math.random() * Math.PI * 2, ph = Math.acos(2 * Math.random() - 1);
-        pos[i*3] = r*Math.sin(ph)*Math.cos(th); pos[i*3+1] = r*Math.sin(ph)*Math.sin(th)*0.7; pos[i*3+2] = r*Math.cos(ph);
-        const c = pal[(Math.random()*pal.length)|0]; col[i*3]=c.r; col[i*3+1]=c.g; col[i*3+2]=c.b;
-      }
-      const pGeo = new THREE.BufferGeometry();
-      pGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-      pGeo.setAttribute('color', new THREE.BufferAttribute(col, 3));
-      const points = new THREE.Points(pGeo, new THREE.PointsMaterial({ size: 0.045, vertexColors: true, transparent: true, opacity: 0.68, depthWrite: false, blending: THREE.AdditiveBlending }));
-      scene.add(points);
-
-      const composer = new EffectComposer(renderer);
-      composer.addPass(new RenderPass(scene, camera));
-      const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.42, 0.5, 0.26);
-      composer.addPass(bloom);
-      composer.addPass(new OutputPass());
-
-      const controls = new OrbitControls(camera, canvas);
-      controls.enableZoom = false; controls.enablePan = false; controls.enableDamping = true; controls.dampingFactor = 0.06;
-      controls.autoRotate = !reduce; controls.autoRotateSpeed = 0.7; controls.rotateSpeed = 0.5;
-
-      // En móvil: arrastre vertical = scroll de la página; horizontal/diagonal = girar el Hero
-      const finePointer = matchMedia('(pointer: fine)').matches;
-      controls.enabled = finePointer;              // OrbitControls solo con mouse; el autoRotate sigue activo
-      let manualYaw = 0;
-      if (!finePointer) {
-        canvas.style.touchAction = 'pan-y';        // permite el scroll vertical nativo
-        let sx = 0, sy = 0, px = 0, gmode = null;
-        canvas.addEventListener('touchstart', e => { const tt = e.touches[0]; sx = px = tt.clientX; sy = tt.clientY; gmode = null; }, { passive: true });
-        canvas.addEventListener('touchmove', e => {
-          const tt = e.touches[0]; const dx = tt.clientX - sx, dy = tt.clientY - sy;
-          if (gmode === null && (Math.abs(dx) > 6 || Math.abs(dy) > 6)) gmode = Math.abs(dx) > Math.abs(dy) ? 'rot' : 'scroll';
-          if (gmode === 'rot') { manualYaw += (tt.clientX - px) * 0.008; e.preventDefault(); }
-          px = tt.clientX;
-        }, { passive: false });
-      }
-
-      const mouse = { x: 0, y: 0 };
-      addEventListener('pointermove', e => { mouse.x = (e.clientX/innerWidth-0.5)*2; mouse.y = (e.clientY/innerHeight-0.5)*2; }, { passive: true });
-      addEventListener('resize', () => {
-        camera.aspect = innerWidth/innerHeight; camera.updateProjectionMatrix();
-        renderer.setSize(innerWidth, innerHeight); composer.setSize(innerWidth, innerHeight);
-      }, { passive: true });
-
-      // ── progreso de scroll (transición dinámica hero → tarjetas) ──
-      const heroEl = document.querySelector('.hero');
-      const contentEl = document.querySelector('.hero-content');
-      const hintEl = document.querySelector('.scroll-hint');
-      const clamp = v => v < 0 ? 0 : v > 1 ? 1 : v;
-      let visible = true, pTarget = 0, p = 0;
-      new IntersectionObserver(([e]) => { visible = e.isIntersecting; }, { threshold: 0.01 }).observe(heroEl);
-      function onScrollHero() {
-        if (reduce) { pTarget = 0; return; }
-        pTarget = clamp(scrollY / Math.max(1, heroEl.offsetHeight - innerHeight));
-      }
-      addEventListener('scroll', onScrollHero, { passive: true });
-      onScrollHero();
-
-      const heroClock = new THREE.Clock();
-      let fpsT0 = 0, fpsN = 0;
-      (function loop() {
-        if (document.documentElement.classList.contains('no3d')) return;   // degradado: detener el hero 3D
-        requestAnimationFrame(loop);
-        if (!visible && p > 0.99) return;
-        p += (pTarget - p) * 0.12;
-        const t = heroClock.getElapsedTime();
-        // watchdog de rendimiento: si el equipo corre a tirones (< 24 fps sostenidos), caer a la cuadrícula estática
-        if (t > 0.6 && !document.hidden) {
-          if (fpsT0 <= 0) { fpsT0 = t; fpsN = 0; }
-          fpsN++;
-          if (t - fpsT0 >= 1.5) {
-            if (fpsN / (t - fpsT0) < 24) document.documentElement.classList.add('no3d');
-            fpsT0 = 1e9;
-          }
-        } else if (fpsT0 > 0 && fpsT0 < 1e9) { fpsT0 = 0; }
-
-        // giro base + aceleración por scroll + arrastre horizontal manual (móvil)
-        knot.rotation.y = t * 0.12 + p * 3.2 + manualYaw;
-        knot.rotation.z = t * 0.05;
-        points.rotation.y = t * 0.02 + p * 0.6;
-
-        // "sumergirse": escala + acercamiento + expansión de partículas + bloom (contenido)
-        knot.scale.setScalar(1 + p * 0.85);
-        points.scale.setScalar(1 + p * 1.6);
-        bloom.strength = 0.42 + p * 0.32;
-
-        // disolver el lienzo al final del recorrido → se funde con el switch/carrusel
-        const fade = p < 0.55 ? 1 : Math.max(0, 1 - (p - 0.55) / 0.35);
-        canvas.style.opacity = fade.toFixed(3);
-        canvas.style.pointerEvents = fade < 0.35 ? 'none' : '';
-
-        lights.forEach(L => L.light.position.set(Math.cos(t*L.s+L.o)*L.r, Math.sin((t*L.s+L.o)*0.8)*2.4, Math.sin(t*L.s+L.o)*L.r));
-
-        knot.position.x += (mouse.x * 0.35 - knot.position.x) * 0.04;
-        knot.position.y += (-mouse.y * 0.3 - knot.position.y) * 0.04;
-        knot.position.z = p * 1.1;
-        controls.autoRotateSpeed = 0.7 + p * 5;
-
-        // desvanece el contenido del hero
-        if (p > 0.005) {
-          contentEl.style.opacity = clamp(1 - p * 1.8);
-          contentEl.style.transform = `translateY(${-p * 70}px)`;
-        } else { contentEl.style.opacity = ''; contentEl.style.transform = ''; }
-        if (hintEl) hintEl.style.opacity = p > 0.02 ? clamp(1 - p * 4) : '';
-
-        controls.update(); composer.render();
-      })();
-    })();
-
-    /* ════════ CARRUSEL + INTRO LAPTOP (conducidos por scroll) ════════ */
-    const zone = document.getElementById('zone');
-    const deck = document.getElementById('deck');
-    const cards = [...deck.querySelectorAll('.card')];
-    const N = cards.length;
-    const gdot = document.getElementById('gdot');
-    const glabel = document.getElementById('glabel');
-    const progress = document.getElementById('progress');
-    const GROUPS = { c: { name: 'Para consultores', color: '#ff5c8a' }, a: { name: 'Administrativo', color: '#ffcf5a' } };
-
-    // dots de progreso (click = saltar a esa tarjeta)
-    const dots = cards.map((c, i) => {
-      const d = document.createElement('span');
-      d.className = 'dot-i';
-      d.addEventListener('click', () => scrollToIndex(i));
-      progress.appendChild(d);
-      return d;
-    });
-
-    // ── capa laptop (intro): ocupa el primer tramo del scroll ──
-    const INTRO = 0.24;                            // 24% del scroll = intro laptop
-    const overlay = document.getElementById('laptopOverlay');
-    const scene = overlay ? overlay.querySelector('.laptop-scene') : null;
-    const laptopCap = overlay ? overlay.querySelector('.laptop-caption') : null;
-    const clamp01 = v => v < 0 ? 0 : v > 1 ? 1 : v;
-
-    function scrollToIndex(i) {
-      const total = zone.offsetHeight - innerHeight;
-      const top = zone.getBoundingClientRect().top + scrollY;
-      const f = INTRO + (i / (N - 1)) * (1 - INTRO);   // el carrusel vive tras el intro
-      window.scrollTo({ top: top + f * total, behavior: 'smooth' });
-    }
-
-    // tarjetas en penumbra: click = traerlas al frente (SOLO en carrusel). En cuadrícula/degradado el link navega normal.
-    cards.forEach((c, i) => {
-      c.addEventListener('click', e => {
-        // cuadrícula/degradado: el link navega normal
-        if (document.documentElement.classList.contains('no3d') || !document.body.classList.contains('mode-carrusel')) return;
-        // si la tarjeta ya está (casi) centrada, abrir el link; si es vecina, traerla al centro primero
-        if (parseFloat(c.dataset.ad || '99') < 0.8) return;
-        e.preventDefault(); scrollToIndex(i);
-      });
-    });
-
-    let target = 0, act = -0.0001, lastAI = -1, introTarget = 0, introP = 0;
-    function onScroll() {
-      const total = Math.max(1, zone.offsetHeight - innerHeight);
-      const f = Math.min(1, Math.max(0, -zone.getBoundingClientRect().top / total));
-      if (f <= INTRO) { introTarget = f / INTRO; target = 0; }
-      else { introTarget = 1; target = ((f - INTRO) / (1 - INTRO)) * (N - 1); }
-    }
-
-    if (!reduce) {
-      addEventListener('scroll', onScroll, { passive: true });
-      addEventListener('resize', onScroll, { passive: true });
-      onScroll();
-
-      (function layout() {
-        requestAnimationFrame(layout);
-        if (document.documentElement.classList.contains('no3d') || document.body.classList.contains('mode-grid')) return;   // cuadrícula/degradado: manda el CSS
-
-        // ── INTRO: la laptop se disuelve, luego el carrusel real aparece chiquito y crece (reversible) ──
-        if (overlay) {
-          introP += (introTarget - introP) * 0.12;
-          if (introP < 0.999 || introTarget < 0.999) {
-            // 1) laptop: leve acercamiento + fade out temprano (0 → ~0.5)
-            if (scene) scene.style.transform = `scale(${(1 + introP * 0.5).toFixed(3)})`;
-            const ov = introP < 0.5 ? 1 : Math.max(0, 1 - (introP - 0.5) / 0.2);
-            overlay.style.opacity = ov.toFixed(3);
-            overlay.style.pointerEvents = ov < 0.05 ? 'none' : '';
-            if (laptopCap) laptopCap.style.opacity = Math.max(0, 1 - introP * 2.4).toFixed(3);
-            // 2) carrusel real: aparece chiquito y crece a tamaño completo (después de irse la laptop)
-            const grow = clamp01((introP - 0.6) / 0.4);
-            deck.style.transform = `scale(${(0.4 + grow * 0.6).toFixed(3)})`;
-            deck.style.opacity = clamp01((introP - 0.58) / 0.14).toFixed(3);
-          } else {
-            if (overlay.style.opacity !== '0') { overlay.style.opacity = '0'; overlay.style.pointerEvents = 'none'; }
-            if (deck.style.transform) { deck.style.transform = ''; deck.style.opacity = ''; }
-          }
-        }
-
-        act += (target - act) * 0.11;
-        const stepX = Math.min(500, innerWidth * 0.62) * 0.86;
-        cards.forEach((c, i) => {
-          const d = i - act, ad = Math.abs(d);
-          // la protagonista crece fuerte (1.12) y las vecinas caen rápido
-          const scale = ad < 1 ? 1.12 - ad * 0.30 : Math.max(0.6, 0.82 - (ad - 1) * 0.11);
-          const y = Math.min(ad, 2.5) * 26;
-          // empuja un poco más las vecinas para dar aire a la del centro
-          const push = d * stepX + Math.sign(d) * Math.min(ad, 1) * 32;
-          c.style.transform = `translate(calc(-50% + ${push.toFixed(1)}px), calc(-50% + ${y.toFixed(1)}px)) scale(${scale.toFixed(3)})`;
-          // oscurece con fuerza todo lo que no está al frente
-          c.style.setProperty('--dim', Math.min(0.9, Math.pow(ad, 0.85) * 0.62).toFixed(3));
-          c.style.zIndex = String(200 - Math.round(ad * 12));
-          c.dataset.ad = ad.toFixed(3);
-          c.classList.toggle('is-active', ad < 0.5);
-        });
-        const ai = Math.round(Math.min(N - 1, Math.max(0, act)));
-        if (ai !== lastAI) {
-          lastAI = ai;
-          const g = GROUPS[cards[ai].dataset.group];
-          glabel.textContent = g.name;
-          glabel.style.color = g.color;
-          gdot.style.background = g.color;
-          gdot.style.boxShadow = `0 0 12px ${g.color}`;
-          dots.forEach((d, i) => d.classList.toggle('on', i === ai));
-        }
-      })();
-    } else {
-      cards.forEach(c => (c.dataset.ad = '0'));
-    }
-
-    /* ════════ SWITCH DE VISTA SIN RECARGAR (Carrusel ⇄ Ver todos) ════════ */
-    function setMode(mode) {
-      const grid = mode === 'grid';
-      document.body.classList.toggle('mode-grid', grid);
-      document.body.classList.toggle('mode-carrusel', !grid);
-      document.querySelectorAll('.view-switch a').forEach(a => {
-        const on = a.dataset.mode === mode;
-        a.classList.toggle('is-on', on);
-        if (on) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
-      });
-      if (grid) {
-        // limpiar los transforms del carrusel para que el grid CSS mande
-        cards.forEach(c => { c.style.transform = ''; c.style.zIndex = ''; c.style.opacity = ''; c.style.removeProperty('--dim'); c.classList.remove('is-active'); });
-        deck.style.transform = ''; deck.style.opacity = '';
-        if (overlay) { overlay.style.opacity = '0'; overlay.style.pointerEvents = 'none'; }
-        glabel.textContent = 'Todas las herramientas'; glabel.style.color = ''; gdot.style.background = 'var(--rose)'; gdot.style.boxShadow = '0 0 12px var(--rose)';
-      } else {
-        introP = 0; act = -0.0001; lastAI = -1;
-        if (!reduce) onScroll();
-      }
-      window.scrollTo(0, 0);
-      try { localStorage.setItem('coe-view', mode); } catch (e) {}
-    }
-    document.querySelectorAll('.view-switch a').forEach(a => {
-      a.addEventListener('click', e => { e.preventDefault(); setMode(a.dataset.mode); });
-    });
-    // vista inicial: carrusel por defecto (recuerda la última elección)
-    let _saved = 'carrusel'; try { _saved = localStorage.getItem('coe-view') || 'carrusel'; } catch (e) {}
-    setMode(_saved === 'grid' ? 'grid' : 'carrusel');
-
-    /* ════════ OBJETOS 3D POR IDENTIDAD (renderer compartido) ════════ */
-    (function cardScenes() {
-      const canvas = document.getElementById('cards-gl');
-      let renderer;
-      try {
-        renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-      } catch (e) { return; }   // sin iconos 3D en las tarjetas, pero el hub sigue usable
-      renderer.setPixelRatio(1);
-      const CDPR = Math.min(DPR, 1.75);
-
-      const metal = (c, e, m = 0.72, r = 0.27) => new THREE.MeshStandardMaterial({ color: c, emissive: e, emissiveIntensity: 0.3, metalness: m, roughness: r });
-      const box = (w, h, d, mat) => new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
-
-      const appleGeo = (() => {
-        const svg = new SVGLoader().parse('<svg xmlns="http://www.w3.org/2000/svg"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>');
-        const shapes = svg.paths.flatMap(pa => SVGLoader.createShapes(pa));
-        const geo = new THREE.ExtrudeGeometry(shapes, { depth: 2.2, bevelEnabled: false });
-        geo.scale(0.075, -0.075, 0.075); geo.center();
-        return geo;
-      })();
-
-      const THEME = {
-        holmes: {
-          l1: 0xff5fa2, l2: 0x9b4dff,
-          build() {
-            const g = new THREE.Group();
-            const slide = new THREE.Group();
-            slide.add(box(1.55, 1.08, 0.07, metal(0xf5ecdc, 0x2a1020, 0.12, 0.6)));
-            const tb = box(0.95, 0.12, 0.03, metal(0xff0054, 0x40001a, 0.3, 0.4)); tb.position.set(-0.2, 0.38, 0.05); slide.add(tb);
-            [0.2, 0.32, 0.46].forEach((h, i) => { const b = box(0.14, h, 0.04, metal(0x7a1e4c, 0x2a0a1a, 0.3, 0.5)); b.position.set(-0.5 + i * 0.22, -0.34 + h / 2, 0.05); slide.add(b); });
-            [0.18, 0.03, -0.12].forEach((y, i) => { const l = box(0.5 - i * 0.06, 0.045, 0.03, metal(0xc79bb0, 0x2a0a1a, 0.2, 0.6)); l.position.set(0.3, y, 0.05); slide.add(l); });
-            slide.rotation.y = -0.16; g.add(slide);
-            const lens = new THREE.Group();
-            lens.add(new THREE.Mesh(new THREE.TorusGeometry(0.34, 0.07, 18, 40), metal(0xd76aa6, 0x40122e)));
-            lens.add(new THREE.Mesh(new THREE.CircleGeometry(0.3, 32), new THREE.MeshStandardMaterial({ color: 0x9fd0ff, transparent: true, opacity: 0.28, metalness: 0.1, roughness: 0.1 })));
-            const handle = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.055, 0.5, 16), metal(0x7a1e4c, 0x2a0a1a));
-            handle.position.set(0.35, -0.35, 0); handle.rotation.z = Math.PI / 4; lens.add(handle);
-            lens.position.set(0.22, -0.05, 0.45); g.add(lens);
-            g.userData.lens = lens;
-            return g;
-          },
-          sub(o, dt, t, hover) { const s = hover ? 2.2 : 0.8; o.userData.lens.position.x = 0.12 + Math.sin(t * s) * 0.34; o.userData.lens.position.y = -0.02 + Math.cos(t * s * 0.8) * 0.2; },
-        },
-        tailor: {
-          l1: 0x4fffcf, l2: 0x2a9df0,
-          build() {
-            const g = new THREE.Group();
-            const photo = new THREE.Group();
-            photo.add(box(1.05, 1.35, 0.06, metal(0xf5ecdc, 0x102a22, 0.1, 0.65)));
-            const skin = metal(0x1d7058, 0x0e3a2e, 0.35, 0.5);
-            const head = new THREE.Mesh(new THREE.SphereGeometry(0.17, 24, 24), skin); head.position.set(0, 0.32, 0.09); photo.add(head);
-            const torso = new THREE.Mesh(new THREE.SphereGeometry(0.24, 24, 24), skin.clone()); torso.scale.set(1.5, 0.85, 0.5); torso.position.set(0, -0.06, 0.08); photo.add(torso);
-            [-0.42, -0.56].forEach((y, i) => { const l = box(0.7 - i * 0.15, 0.045, 0.03, metal(0x9cc9ba, 0x0e2a22, 0.2, 0.6)); l.position.set(0, y, 0.05); photo.add(l); });
-            photo.position.x = -0.14; g.add(photo);
-            for (let i = 0; i < 6; i++) { const d = box(0.035, 0.09, 0.03, metal(0xbfe9dc, 0x0e3a2e, 0.2, 0.5)); d.position.set(0.46, 0.62 - i * 0.25, 0.07); g.add(d); }
-            const sc = new THREE.Group();
-            const mkB = () => { const b = new THREE.Group(); const blade = new THREE.Mesh(new THREE.ConeGeometry(0.07, 0.85, 16), metal(0xbfe9dc, 0x0e3a2e)); blade.position.y = 0.45; b.add(blade); const ring = new THREE.Mesh(new THREE.TorusGeometry(0.15, 0.05, 12, 24), metal(0x2ec7a0, 0x0e3a2e)); ring.position.y = -0.4; b.add(ring); return b; };
-            const b1 = mkB(), b2 = mkB(); sc.add(b1, b2);
-            sc.add(new THREE.Mesh(new THREE.SphereGeometry(0.07, 14, 14), metal(0xf5ecdc, 0x333333)));
-            sc.rotation.z = Math.PI; sc.position.set(0.46, 0.55, 0.14);
-            g.add(sc);
-            g.userData.sc = sc; g.userData.b1 = b1; g.userData.b2 = b2;
-            return g;
-          },
-          sub(o, dt, t, hover) {
-            const sp = hover ? 2.4 : 1;
-            const a = 0.16 + Math.abs(Math.sin(t * sp * 2.6)) * 0.2;
-            o.userData.b1.rotation.z = a; o.userData.b2.rotation.z = -a;
-            const ph = (t * 0.12 * (hover ? 3 : 1)) % 1;
-            o.userData.sc.position.y = 0.62 - ph * 1.15;
-          },
-        },
-        trace: {
-          l1: 0xb9a5ff, l2: 0x41B9FF,
-          build() {
-            const g = new THREE.Group();
-            const nodes = [];
-            const mkN = (w, h, x, y) => { const m = box(w, h, 0.2, metal(0xb2a5ff, 0x241a4a)); m.position.set(x, y, 0); g.add(m); nodes.push(m); return m; };
-            mkN(0.75, 0.34, 0, 0.82); mkN(0.9, 0.42, 0, 0); mkN(0.62, 0.32, -0.55, -0.82); mkN(0.62, 0.32, 0.55, -0.82);
-            const cm = metal(0x6a5acf, 0x241a4a, 0.5, 0.4);
-            const link = (ax, ay, bx, by) => { const a = new THREE.Vector3(ax, ay, 0), b = new THREE.Vector3(bx, by, 0); const c = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, a.distanceTo(b), 10), cm); c.position.copy(a.clone().add(b).multiplyScalar(0.5)); c.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), b.clone().sub(a).normalize()); g.add(c); };
-            link(0, 0.65, 0, 0.21); link(-0.15, -0.21, -0.5, -0.66); link(0.15, -0.21, 0.5, -0.66);
-            g.userData.nodes = nodes;
-            return g;
-          },
-          sub(o, dt, t, hover) { const sp = hover ? 5 : 2.2; o.userData.nodes.forEach((b, i) => { b.material.emissiveIntensity = 0.3 + Math.max(0, Math.sin(t * sp - i * 1.1)) * 0.7; }); },
-        },
-        atlas: {
-          l1: 0xff0054, l2: 0xff9ecb,
-          build() {
-            const g = new THREE.Group();
-            const fm = metal(0xff5c8a, 0x5a1030, 0.4, 0.5);
-            const steps = [];
-            const mkF = (x, y, rot, flip) => {
-              const f = new THREE.Group();
-              const sole = new THREE.Mesh(new THREE.SphereGeometry(0.11, 14, 14), fm.clone()); sole.scale.set(0.72, 1.15, 0.4); f.add(sole);
-              const toe = new THREE.Mesh(new THREE.SphereGeometry(0.05, 12, 12), fm.clone()); toe.scale.set(1, 0.9, 0.5); toe.position.set(flip * 0.05, 0.17, 0); f.add(toe);
-              f.position.set(x, y, 0); f.rotation.z = rot; g.add(f); steps.push(f); return f;
-            };
-            mkF(-0.62, -0.78, -0.38, 1); mkF(-0.22, -0.5, -0.3, -1); mkF(-0.44, -0.1, -0.22, 1); mkF(-0.04, 0.16, -0.14, -1);
-            const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 1.05, 12), metal(0xf5ecdc, 0x333333)); pole.position.set(0.5, 0.6, 0); g.add(pole);
-            const flag = new THREE.Group();
-            for (let r = 0; r < 2; r++) for (let c = 0; c < 3; c++) {
-              const cell = box(0.16, 0.16, 0.03, (r + c) % 2 ? metal(0x2a0e1a, 0x000000, 0.2, 0.6) : metal(0xf5ecdc, 0x333333, 0.2, 0.6));
-              cell.position.set(0.16 * c + 0.08, -0.16 * r, 0); flag.add(cell);
-            }
-            flag.position.set(0.5, 1.04, 0); g.add(flag);
-            g.userData.steps = steps; g.userData.flag = flag;
-            return g;
-          },
-          sub(o, dt, t, hover) {
-            const sp = hover ? 4 : 1.6;
-            o.userData.steps.forEach((f, i) => { const w = Math.max(0, Math.sin(t * sp - i * 0.9)); f.scale.setScalar(1 + w * 0.3); });
-            o.userData.flag.rotation.y = Math.sin(t * (hover ? 4 : 1.5)) * 0.3;
-          },
-        },
-        echo: {
-          l1: 0x7fd8ff, l2: 0x9b4dff,
-          build() {
-            const g = new THREE.Group();
-            const apple = new THREE.Mesh(appleGeo, metal(0xf5f5f7, 0x1a1a2e, 0.6, 0.3));
-            apple.position.x = -0.52; g.add(apple);
-            const play = new THREE.Group();
-            const tri = (pts, col) => {
-              const s = new THREE.Shape(); s.moveTo(pts[0][0], pts[0][1]); s.lineTo(pts[1][0], pts[1][1]); s.lineTo(pts[2][0], pts[2][1]); s.closePath();
-              const geo = new THREE.ExtrudeGeometry(s, { depth: 0.16, bevelEnabled: false }); geo.translate(0, 0, -0.08);
-              return new THREE.Mesh(geo, metal(col, 0x0c2a3a, 0.5, 0.35));
-            };
-            play.add(tri([[-0.4, 0.62], [0.55, 0.035], [-0.4, 0.035]], 0x2ad0e0));
-            play.add(tri([[-0.4, -0.62], [0.55, -0.035], [-0.4, -0.035]], 0x5fe089));
-            play.position.x = 0.45; g.add(play);
-            g.userData.apple = apple; g.userData.play = play;
-            return g;
-          },
-          sub(o, dt, t, hover) { const s = hover ? 2.4 : 1; o.userData.apple.position.y = Math.sin(t * s) * 0.07; o.userData.play.position.y = Math.sin(t * s + Math.PI) * 0.07; },
-        },
-        scribe: {
-          l1: 0xffb066, l2: 0xff5c8a,
-          build() {
-            const g = new THREE.Group();
-            const paper = new THREE.Group();
-            paper.add(box(1.08, 1.4, 0.05, metal(0xf5ecdc, 0x2a1508, 0.08, 0.7)));
-            const tb = box(0.6, 0.1, 0.03, metal(0xff9d5c, 0x4a2408, 0.35, 0.45)); tb.position.set(-0.16, 0.56, 0.04); paper.add(tb);
-            const lines = []; const lineYs = [0.3, 0.08, -0.14, -0.36];
-            lineYs.forEach((y, i) => {
-              const ln = box(0.74 - (i % 2) * 0.12, 0.05, 0.03, metal(0xd8b090, 0x3a1c08, 0.2, 0.6));
-              ln.position.set(-0.03 - (i % 2) * 0.06, y, 0.04); paper.add(ln); lines.push(ln);
-            });
-            const chk = box(0.14, 0.14, 0.04, metal(0x22c55e, 0x0e3a1e, 0.3, 0.5)); chk.position.set(0.34, -0.58, 0.04); paper.add(chk);
-            paper.position.x = -0.1; paper.rotation.z = 0.04; g.add(paper);
-            const pen = new THREE.Group();
-            const nib = new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.18, 14), metal(0xf5ecdc, 0x333333, 0.6, 0.3));
-            nib.position.y = 0.09; nib.rotation.z = Math.PI; pen.add(nib);
-            const bodyP = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.05, 0.62, 14), metal(0xff9d5c, 0x4a2408));
-            bodyP.position.y = 0.49; pen.add(bodyP);
-            const cap = new THREE.Mesh(new THREE.SphereGeometry(0.065, 14, 14), metal(0xffd0a0, 0x4a2408));
-            cap.position.y = 0.82; pen.add(cap);
-            pen.rotation.z = -0.45; pen.position.set(-0.4, 0.35, 0.14); g.add(pen);
-            g.userData.pen = pen; g.userData.lines = lines; g.userData.chk = chk; g.userData.lineYs = lineYs;
-            return g;
-          },
-          sub(o, dt, t, hover) {
-            const sp = hover ? 2.2 : 0.9;
-            const ph = (t * 0.28 * sp) % 4;
-            const li = Math.floor(ph), fx = ph - li;
-            o.userData.pen.position.x = -0.5 + fx * 0.72;
-            o.userData.pen.position.y = o.userData.lineYs[li] + 0.03;
-            o.userData.pen.rotation.z = -0.45 + Math.sin(t * 8 * sp) * 0.045;
-            o.userData.lines.forEach((ln, i) => { ln.material.emissiveIntensity = i < li ? 0.85 : (i === li ? 0.3 + fx * 0.55 : 0.2); });
-            const w = Math.max(0, Math.sin(t * (hover ? 3 : 1.4)));
-            o.userData.chk.scale.setScalar(1 + w * 0.3);
-          },
-        },
-        tempo: {
-          l1: 0xffd766, l2: 0xff7a3d,
-          build() {
-            const g = new THREE.Group();
-            const sea = box(2.1, 0.16, 0.5, new THREE.MeshStandardMaterial({ color: 0x41B9FF, transparent: true, opacity: 0.75, metalness: 0.4, roughness: 0.3, emissive: 0x0c2a48, emissiveIntensity: 0.3 }));
-            sea.position.set(0, -0.52, -0.5); g.add(sea);
-            const sand = new THREE.Mesh(new THREE.CylinderGeometry(1.0, 1.1, 0.22, 40), metal(0xf2d49b, 0x4a3408, 0.1, 0.85));
-            sand.position.y = -0.68; g.add(sand);
-            const sun = new THREE.Group();
-            sun.add(new THREE.Mesh(new THREE.SphereGeometry(0.24, 24, 24), new THREE.MeshStandardMaterial({ color: 0xffd76b, emissive: 0xffb020, emissiveIntensity: 1.4, metalness: 0, roughness: 0.5 })));
-            const rays = new THREE.Group();
-            for (let i = 0; i < 8; i++) { const a = i / 8 * Math.PI * 2; const ray = new THREE.Mesh(new THREE.ConeGeometry(0.04, 0.16, 8), new THREE.MeshStandardMaterial({ color: 0xffd76b, emissive: 0xffb020, emissiveIntensity: 1 })); ray.position.set(Math.cos(a) * 0.42, Math.sin(a) * 0.42, 0); ray.rotation.z = a - Math.PI / 2; rays.add(ray); }
-            sun.add(rays); sun.position.set(0.55, 0.58, -0.2); g.add(sun);
-            const palm = new THREE.Group();
-            const tm = metal(0xc98a3a, 0x3a2208, 0.2, 0.7);
-            for (let i = 0; i < 3; i++) { const seg = new THREE.Mesh(new THREE.CylinderGeometry(0.05 - i * 0.008, 0.06 - i * 0.008, 0.34, 12), tm); seg.position.set(-0.55 + i * 0.07, -0.44 + i * 0.3, 0); seg.rotation.z = -0.18 * (i + 1); palm.add(seg); }
-            const lm = metal(0x3fbf7f, 0x0e3a1e, 0.25, 0.6);
-            for (let i = 0; i < 5; i++) { const leaf = new THREE.Mesh(new THREE.SphereGeometry(0.2, 12, 12), lm); leaf.scale.set(1.6, 0.22, 0.5); const a = i / 5 * Math.PI * 2; leaf.position.set(-0.34 + Math.cos(a) * 0.24, 0.5 + Math.sin(a) * 0.07, Math.sin(a) * 0.12); leaf.rotation.z = Math.cos(a) * 0.5; palm.add(leaf); }
-            g.add(palm);
-            g.userData.rays = rays; g.userData.palm = palm;
-            g.rotation.x = -0.1;
-            return g;
-          },
-          sub(o, dt, t, hover) { o.userData.rays.rotation.z = t * (hover ? 1.6 : 0.4); o.userData.palm.rotation.z = Math.sin(t * (hover ? 3 : 1)) * 0.05; },
-        },
-        midas: {
-          l1: 0xffe08a, l2: 0xff8a3d, spin: true,
-          build() {
-            const g = new THREE.Group();
-            const coin = new THREE.Mesh(new THREE.CylinderGeometry(1.0, 1.0, 0.16, 56), metal(0xffcf5a, 0x4a3408)); coin.rotation.x = Math.PI / 2; g.add(coin);
-            g.add(new THREE.Mesh(new THREE.TorusGeometry(0.98, 0.06, 16, 56), metal(0xffe08a, 0x4a3408)));
-            const sm = metal(0x8a5a08, 0x2a1a04, 0.5, 0.4);
-            const bar = new THREE.Mesh(new THREE.CapsuleGeometry(0.05, 0.85, 4, 12), sm); bar.position.z = 0.09; g.add(bar);
-            const at = new THREE.Mesh(new THREE.TorusGeometry(0.24, 0.06, 12, 24, Math.PI * 1.35), sm); at.position.set(0, 0.2, 0.09); at.rotation.z = Math.PI * 0.16; g.add(at);
-            const ab = new THREE.Mesh(new THREE.TorusGeometry(0.24, 0.06, 12, 24, Math.PI * 1.35), sm); ab.position.set(0, -0.2, 0.09); ab.rotation.z = Math.PI * 1.16; g.add(ab);
-            return g;
-          },
-          sub() {},
-        },
-        sigma: {
-          l1: 0xb2a5ff, l2: 0x5fe0ff,
-          build() {
-            const g = new THREE.Group();
-            const db = new THREE.Group();
-            for (let i = 0; i < 3; i++) {
-              const d = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 0.17, 32), metal(0x8b7cff, 0x1e1a4a)); d.position.y = 0.22 - i * 0.22; db.add(d);
-              const rim = new THREE.Mesh(new THREE.TorusGeometry(0.42, 0.028, 10, 32), metal(0xb2a5ff, 0x1e1a4a)); rim.rotation.x = Math.PI / 2; rim.position.y = d.position.y + 0.085; db.add(rim);
-            }
-            db.position.set(-0.55, 0.3, -0.18); db.rotation.z = 0.06; g.add(db);
-            const paper = new THREE.Group();
-            paper.add(box(0.95, 1.28, 0.05, metal(0xf5ecdc, 0x1a1430, 0.08, 0.7)));
-            const tb = box(0.55, 0.09, 0.03, metal(0x8b7cff, 0x1e1a4a, 0.3, 0.5)); tb.position.set(-0.12, 0.5, 0.04); paper.add(tb);
-            const checks = [];
-            [0.24, -0.02, -0.28].forEach((y) => {
-              const cb = box(0.13, 0.13, 0.04, metal(0x22c55e, 0x0e3a1e, 0.3, 0.5)); cb.position.set(-0.32, y, 0.04); paper.add(cb); checks.push(cb);
-              const ln = box(0.42, 0.05, 0.03, metal(0xb9a5d0, 0x1a1430, 0.2, 0.6)); ln.position.set(0.08, y, 0.04); paper.add(ln);
-            });
-            const score = box(0.3, 0.14, 0.04, metal(0x22c55e, 0x0e3a1e, 0.3, 0.5)); score.position.set(0.22, -0.52, 0.04); paper.add(score);
-            paper.position.set(0.3, -0.08, 0.25); paper.rotation.z = -0.07; g.add(paper);
-            g.userData.checks = checks;
-            return g;
-          },
-          sub(o, dt, t, hover) { const sp = hover ? 4 : 1.6; o.userData.checks.forEach((c, i) => { const w = Math.max(0, Math.sin(t * sp - i * 1.0)); c.scale.setScalar(1 + w * 0.35); }); },
-        },
-      };
-
-      const items = [];
-      cards.forEach(card => {
-        const stage = card.querySelector('.char-stage');
-        const cfg = THEME[card.dataset.char];
-        if (!cfg) return;
-        const cv = document.createElement('canvas');
-        cv.className = 'card-cv';
-        stage.appendChild(cv);
-        const ctx = cv.getContext('2d');
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 100);
-        camera.position.set(0, 0, 4);
-        scene.add(new THREE.AmbientLight(0xffffff, 0.4));
-        const k1 = new THREE.PointLight(cfg.l1, 45, 20, 2); k1.position.set(3, 3, 4); scene.add(k1);
-        const k2 = new THREE.PointLight(cfg.l2, 32, 20, 2); k2.position.set(-3, -2, 3); scene.add(k2);
-        const mesh = cfg.build();
-        scene.add(mesh);
-        const item = { card, stage, cv, ctx, scene, camera, mesh, sub: cfg.sub, spin: !!cfg.spin, rot: Math.random() * 6, hover: false };
-        card.addEventListener('pointerenter', () => item.hover = true);
-        card.addEventListener('pointerleave', () => item.hover = false);
-        items.push(item);
-      });
-
-      // Render por-tarjeta: se renderiza en el buffer compartido al tamaño de la tarjeta y se copia
-      // a un lienzo 2D dentro de cada tarjeta (viaja pegado a ella → sin atraso al hacer scroll).
-      let curW = 0, curH = 0;
-      const clock = new THREE.Clock();
-      (function loop() {
-        if (document.documentElement.classList.contains('no3d')) return;   // degradado: no gastar GPU en las tarjetas 3D
-        requestAnimationFrame(loop);
-        const dt = Math.min(clock.getDelta(), 0.05);
-        const t = clock.elapsedTime;
-        for (const it of items) {
-          const r = it.stage.getBoundingClientRect();
-          if (r.bottom < -40 || r.top > innerHeight + 40 || r.right < 0 || r.left > innerWidth || r.width === 0) continue;
-          const ow = it.stage.offsetWidth, oh = it.stage.offsetHeight;      // tamaño sin transform (estable)
-          if (!ow || !oh) continue;
-          const pw = Math.max(1, Math.round(ow * CDPR)), ph = Math.max(1, Math.round(oh * CDPR));
-          if (it.cv.width !== pw || it.cv.height !== ph) { it.cv.width = pw; it.cv.height = ph; }
-          if (it.spin) { it.rot += (it.hover ? 1.4 : 0.4) * dt; it.mesh.rotation.y = it.rot; }
-          else { it.mesh.rotation.y += (Math.sin(t * 0.5) * 0.35 - it.mesh.rotation.y) * 0.06; }
-          it.mesh.position.y = Math.sin(t * 0.9 + it.rot) * 0.05;
-          if (it.sub) it.sub(it.mesh, dt, t, it.hover);
-          if (curW !== pw || curH !== ph) { renderer.setSize(pw, ph, false); curW = pw; curH = ph; }
-          it.camera.aspect = ow / oh; it.camera.updateProjectionMatrix();
-          renderer.render(it.scene, it.camera);
-          it.ctx.clearRect(0, 0, pw, ph);
-          it.ctx.drawImage(renderer.domElement, 0, 0, pw, ph);
-        }
-      })();
-    })();
-  </script>
 </body>
 </html>
