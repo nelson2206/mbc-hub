@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aria · CallQA — QA de llamadas con IA · COE IA MBC</title>
+  <meta name="description" content="CallQA — Aseguramiento de calidad automatizado para call centers. Transcribe, enmascara datos sensibles y evalúa cada llamada contra tu rúbrica, con dashboards y coaching." />
+  <meta name="theme-color" content="#0b0410" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="COE IA MBC · Minsait Business Consulting" />
+  <meta property="og:title" content="Aria · CallQA — QA de llamadas con IA" />
+  <meta property="og:description" content="Escucha cada llamada, la transcribe, enmascara datos sensibles y la evalúa contra tu rúbrica. Score por dimensión, alertas y coaching por asesor." />
+  <meta property="og:url" content="https://nelson2206.github.io/mbc-hub/callqa.html" />
+  <meta property="og:image" content="https://nelson2206.github.io/mbc-hub/og-image.png?v=1" />
+  <meta property="og:locale" content="es_PE" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <script defer src="https://umami-mbc.vercel.app/script.js" data-website-id="3fa47089-2ca1-49e8-9933-1ee6a9990e0e"></script>
+  <style>
+    :root {
+      --bg-0: #0b0410; --bg-1: #160a26;
+      --rose: #ff0054; --pink: #ff6a9e; --cyan: #41B9FF;
+      --c: #2dd4bf; /* acento CallQA (teal) */
+      --text: #efe6f5; --text-soft: rgba(239,230,245,0.62); --muted: rgba(239,230,245,0.42);
+      --glass: rgba(24,12,38,0.55); --glass-brd: rgba(255,255,255,0.09);
+      --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', system-ui, -apple-system, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(120% 70% at 50% -5%, #38154f 0%, transparent 55%),
+        radial-gradient(90% 60% at 88% 6%, #123b38 0%, transparent 45%),
+        linear-gradient(180deg, var(--bg-1) 0%, var(--bg-0) 42%, #08030d 100%);
+      background-attachment: fixed;
+      color: var(--text); -webkit-font-smoothing: antialiased; min-height: 100dvh;
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    .aura { position: fixed; inset: -20% 0 auto; height: 70vh; z-index: 0; pointer-events: none;
+      background: radial-gradient(50% 60% at 50% 30%, rgba(45,212,191,0.14), transparent 60%),
+                  radial-gradient(45% 55% at 70% 20%, rgba(65,185,255,0.12), transparent 60%); }
+    @media (prefers-reduced-motion: no-preference) { .aura { animation: breathe 12s var(--ease-out) infinite alternate; } }
+    @keyframes breathe { from { opacity: .7; transform: translateY(-10px) scale(1); } to { opacity: 1; transform: translateY(10px) scale(1.06); } }
+
+    .grain {
+      position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: 0.045; mix-blend-mode: overlay;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    .wrap { position: relative; z-index: 2; max-width: 1080px; margin: 0 auto; padding: 0 22px 90px; }
+
+    /* ── nav ── */
+    .topbar { display: flex; align-items: center; justify-content: space-between; padding: 26px 0 0; }
+    .back { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--text-soft); padding: 8px 14px; border-radius: 9999px; background: rgba(255,255,255,0.04); border: 1px solid var(--glass-brd); backdrop-filter: blur(8px); transition: color .2s var(--ease-out), border-color .2s var(--ease-out); }
+    .back:hover { color: var(--text); border-color: var(--c); }
+    .back svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    .kicker { font-size: 10.5px; font-weight: 800; letter-spacing: 0.24em; text-transform: uppercase; color: var(--muted); }
+
+    /* ── hero ── */
+    header.hero { text-align: center; padding: clamp(40px, 9vh, 90px) 0 30px; }
+    .badge-line { display: inline-flex; align-items: center; gap: 9px; font-size: 10.5px; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-soft); padding: 8px 16px; border-radius: 9999px; background: rgba(45,212,191,0.08); border: 1px solid rgba(45,212,191,0.28); }
+    .badge-line .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--c); box-shadow: 0 0 12px var(--c); }
+    @media (prefers-reduced-motion: no-preference) { .badge-line .dot { animation: pulse 2.2s ease infinite; } }
+    .hero .ico { width: 74px; height: 74px; border-radius: 20px; display: grid; place-items: center; font-size: 38px; margin: 24px auto 6px; background: rgba(45,212,191,0.08); border: 1px solid rgba(45,212,191,0.25); box-shadow: 0 0 40px -10px var(--c); }
+    h1.title { font-size: clamp(2.6rem, 9vw, 5rem); font-weight: 900; letter-spacing: -0.045em; line-height: 0.98; margin: 12px 0 6px; }
+    h1.title .g { background: linear-gradient(120deg, var(--c), #5ad1ff 60%, var(--cyan)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+    .persona { font-size: 15px; font-weight: 700; color: var(--c); letter-spacing: .02em; }
+    .tagline { color: var(--text-soft); font-size: clamp(15px, 2.4vw, 19px); font-weight: 500; max-width: 620px; margin: 14px auto 0; line-height: 1.5; }
+    .tagline b { color: var(--text); font-weight: 700; }
+
+    .actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 28px; }
+    .btn { display: inline-flex; align-items: center; gap: 9px; font-size: 13.5px; font-weight: 700; padding: 12px 22px; border-radius: 12px; border: 1px solid var(--glass-brd); background: rgba(255,255,255,0.04); transition: transform .2s var(--ease-out), border-color .2s var(--ease-out), background .2s var(--ease-out); }
+    .btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    .btn:hover { transform: translateY(-2px); border-color: var(--c); }
+    .btn.primary { background: linear-gradient(120deg, rgba(45,212,191,0.22), rgba(65,185,255,0.16)); border-color: rgba(45,212,191,0.4); }
+
+    /* ── secciones ── */
+    .sec { margin-top: 52px; }
+    .sec-tag { display: inline-flex; align-items: center; gap: 9px; font-size: 11px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-soft); margin-bottom: 20px; }
+    .sec-tag .gd { width: 8px; height: 8px; border-radius: 50%; background: var(--c); box-shadow: 0 0 12px var(--c); }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 14px; }
+    .feat { background: var(--glass); border: 1px solid var(--glass-brd); border-radius: 16px; padding: 20px; backdrop-filter: blur(12px); transition: transform .22s var(--ease-out), border-color .22s var(--ease-out); }
+    @media (hover: hover) { .feat:hover { transform: translateY(-4px); border-color: var(--c); } }
+    .feat .fico { font-size: 24px; margin-bottom: 12px; }
+    .feat h3 { font-size: 15.5px; font-weight: 800; letter-spacing: -0.01em; margin-bottom: 6px; }
+    .feat p { font-size: 13px; line-height: 1.5; color: var(--text-soft); }
+
+    /* ── flujo ── */
+    .flow { display: flex; flex-wrap: wrap; gap: 10px; align-items: stretch; }
+    .step { flex: 1 1 150px; background: var(--glass); border: 1px solid var(--glass-brd); border-radius: 14px; padding: 16px 18px; backdrop-filter: blur(12px); position: relative; }
+    .step .n { font-size: 11px; font-weight: 800; color: var(--c); letter-spacing: .1em; }
+    .step h4 { font-size: 14px; font-weight: 800; margin: 6px 0 4px; }
+    .step p { font-size: 12px; color: var(--text-soft); line-height: 1.45; }
+
+    /* ── stack chips ── */
+    .chips { display: flex; flex-wrap: wrap; gap: 9px; }
+    .chip { font-size: 12.5px; font-weight: 700; color: var(--text-soft); padding: 8px 14px; border-radius: 9999px; background: rgba(255,255,255,0.04); border: 1px solid var(--glass-brd); }
+    .chip b { color: var(--text); }
+
+    /* ── nota ── */
+    .note { margin-top: 40px; background: rgba(45,212,191,0.06); border: 1px solid rgba(45,212,191,0.22); border-radius: 16px; padding: 22px 24px; }
+    .note h3 { font-size: 15px; font-weight: 800; margin-bottom: 8px; display: flex; align-items: center; gap: 9px; }
+    .note p { font-size: 13.5px; line-height: 1.6; color: var(--text-soft); }
+    .note p + p { margin-top: 8px; }
+    .note b { color: var(--text); }
+
+    footer { text-align: center; color: var(--muted); font-size: 12px; margin-top: 56px; }
+    footer b { color: var(--text-soft); font-weight: 700; }
+    footer a { color: var(--c); font-weight: 700; }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .badge-line, .hero .ico, h1.title, .persona, .tagline, .actions, .sec { opacity: 0; animation: rise .6s var(--ease-out) forwards; }
+      .hero .ico { animation-delay: .06s; } h1.title { animation-delay: .12s; } .persona { animation-delay: .16s; }
+      .tagline { animation-delay: .22s; } .actions { animation-delay: .28s; }
+      .sec:nth-of-type(1){animation-delay:.10s} .sec:nth-of-type(2){animation-delay:.16s} .sec:nth-of-type(3){animation-delay:.22s}
+    }
+    @keyframes rise { to { opacity: 1; transform: translateY(0); } }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.35} }
+  </style>
+</head>
+<body>
+  <div class="aura"></div>
+  <div class="grain"></div>
+
+  <div class="wrap">
+    <nav class="topbar">
+      <a class="back" href="index.html"><svg viewBox="0 0 24 24"><path d="M19 12H5M11 18l-6-6 6-6"/></svg> Volver al hub</a>
+      <span class="kicker">COE IA · MBC Perú</span>
+    </nav>
+
+    <header class="hero">
+      <p class="badge-line"><span class="dot"></span> Prototipo de evaluación · Beta</p>
+      <div class="ico">🎧</div>
+      <h1 class="title">Call<span class="g">QA</span></h1>
+      <p class="persona">Aria · La Auditora de Llamadas</p>
+      <p class="tagline">Escucha <b>cada llamada</b> del call center, la transcribe y la evalúa contra tu rúbrica: score por dimensión, alertas de riesgo y <b>coaching</b> para cada asesor.</p>
+      <div class="actions">
+        <a class="btn primary" href="https://github.com/nelson2206/callqa" target="_blank" rel="noopener" data-umami-event="callqa-repo">
+          <svg viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+          Ver repositorio <span style="opacity:.6;font-weight:600">(privado)</span>
+        </a>
+        <a class="btn" href="index.html" data-umami-event="callqa-hub">Explorar el hub</a>
+      </div>
+    </header>
+
+    <!-- Qué hace -->
+    <section class="sec">
+      <div class="sec-tag"><span class="gd"></span> Qué hace</div>
+      <div class="grid">
+        <div class="feat"><div class="fico">📝</div><h3>Transcripción + diarización</h3><p>Convierte el audio a texto y separa quién habla (asesor / cliente) para analizar cada turno.</p></div>
+        <div class="feat"><div class="fico">🛡️</div><h3>Enmascarado de datos</h3><p>Oculta DNI, tarjetas, CVV y teléfonos antes de guardar y de enviar al modelo de IA.</p></div>
+        <div class="feat"><div class="fico">📐</div><h3>Rúbrica configurable</h3><p>Define dimensiones ponderadas y subcriterios; la IA evalúa cada llamada según tu estándar.</p></div>
+        <div class="feat"><div class="fico">📊</div><h3>Dashboards y ranking</h3><p>Score de equipo, tendencias, KPIs por campaña y ranking de ejecutivos en un solo lugar.</p></div>
+        <div class="feat"><div class="fico">🧠</div><h3>Detección del ejecutivo</h3><p>La IA identifica el nombre del asesor en la llamada y la empareja con su ficha automáticamente.</p></div>
+        <div class="feat"><div class="fico">📄</div><h3>Reportes PDF</h3><p>Genera el informe de cada llamada con score, resumen y recomendaciones accionables.</p></div>
+      </div>
+    </section>
+
+    <!-- Cómo funciona -->
+    <section class="sec">
+      <div class="sec-tag"><span class="gd"></span> Cómo funciona</div>
+      <div class="flow">
+        <div class="step"><div class="n">01</div><h4>Sube el audio</h4><p>Individual o por lote, asignando la campaña.</p></div>
+        <div class="step"><div class="n">02</div><h4>Transcribe</h4><p>Speech-to-text con diarización por hablante.</p></div>
+        <div class="step"><div class="n">03</div><h4>Enmascara</h4><p>Se ocultan los datos sensibles del cliente.</p></div>
+        <div class="step"><div class="n">04</div><h4>Evalúa</h4><p>La IA puntúa contra la rúbrica y la campaña.</p></div>
+        <div class="step"><div class="n">05</div><h4>Reporta</h4><p>Dashboards, alertas, ranking y PDF por llamada.</p></div>
+      </div>
+    </section>
+
+    <!-- Stack -->
+    <section class="sec">
+      <div class="sec-tag"><span class="gd"></span> Bajo el capó</div>
+      <div class="chips">
+        <span class="chip"><b>FastAPI</b> · Python 3.11</span>
+        <span class="chip"><b>Next.js 14</b> · TypeScript</span>
+        <span class="chip"><b>PostgreSQL</b> + SQLAlchemy</span>
+        <span class="chip"><b>Celery</b> + Redis</span>
+        <span class="chip"><b>Groq</b> / Claude / OpenAI</span>
+        <span class="chip">Tailwind · Recharts</span>
+        <span class="chip">Docker · Render · Vercel</span>
+      </div>
+    </section>
+
+    <!-- Nota -->
+    <div class="note">
+      <h3>🔒 Prototipo endurecido</h3>
+      <p>Esta copia incorpora las <b>correcciones de seguridad y robustez</b> de una revisión de código: sin credenciales públicas en producción, PII enmascarada antes de persistir, <b>JWT</b> seguro obligatorio, subidas de audio acotadas y una batería de tests con CI. El detalle está en <b>CORRECCIONES.md</b> del repositorio.</p>
+      <p>Es un entorno de <b>evaluación</b> — no debe usarse con datos reales de clientes. La app funcional se despliega en Render (backend) y Vercel (frontend).</p>
+    </div>
+
+    <footer>Una herramienta de <b>COE IA · Minsait Business Consulting Perú</b> · <a href="index.html">← volver al hub</a></footer>
+  </div>
+</body>
+</html>
