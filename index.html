@@ -103,7 +103,7 @@
     @media (prefers-reduced-motion: no-preference) {
       .eyebrow, h1.title, .tagline, .group { opacity: 0; animation: rise .6s var(--ease-out) forwards; }
       h1.title { animation-delay: .08s; } .tagline { animation-delay: .16s; }
-      .group:nth-of-type(1) { animation-delay: .22s; } .group:nth-of-type(2) { animation-delay: .30s; }
+      .group:nth-of-type(1) { animation-delay: .22s; } .group:nth-of-type(2) { animation-delay: .30s; } .group:nth-of-type(3) { animation-delay: .38s; }
       .card { opacity: 0; animation: rise .55s var(--ease-out) forwards; }
       .grid .card:nth-child(1){animation-delay:.06s} .grid .card:nth-child(2){animation-delay:.12s}
       .grid .card:nth-child(3){animation-delay:.18s} .grid .card:nth-child(4){animation-delay:.24s}
@@ -123,6 +123,42 @@
       <h1 class="title">COE <span class="ia">IA</span> MBC</h1>
       <p class="tagline">Cada herramienta, <b>un especialista</b>. El ecosistema de IA de MBC.</p>
     </header>
+
+    <!-- ══ Favoritos ══ -->
+    <section class="group">
+      <div class="group-tag"><span class="gd" style="color:#ffd166"></span> ★ Favoritos</div>
+      <div class="grid">
+        <a class="card" style="--c:#4D7CFF" href="https://nelson2206.github.io/hub-encuestas-mbc/" data-char="vox" data-umami-event="abrir-vox">
+          <span class="ico">🎙️</span>
+          <div class="cname">Vox <span class="role">· El Escucha</span></div>
+          <div class="ctool">Encuestas MBC</div>
+          <p class="cdesc">Recoge la voz de la gente: responden hablando, escribiendo o adjuntando. Transcribe cada audio solo y te entrega el Excel listo para analizar.</p>
+          <span class="cta">Entrar <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </a>
+        <a class="card" style="--c:#9085e9" href="https://procesos.mbc-latam.com/" data-char="trace" data-umami-event="abrir-trace">
+          <span class="beta">Beta</span>
+          <span class="ico">🗺️</span>
+          <div class="cname">Trace <span class="role">· El Arquitecto</span></div>
+          <div class="ctool">Process IQ</div>
+          <p class="cdesc">Convierte el caos en claridad. Levanta, estructura y documenta flujos de negocio con inteligencia.</p>
+          <span class="cta">Entrar <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </a>
+        <a class="card" style="--c:#5ad1ff" href="https://vacaciones.mbc-latam.com/" data-char="tempo" data-umami-event="abrir-tempo">
+          <span class="ico">📅</span>
+          <div class="cname">Tempo <span class="role">· El Guardián</span></div>
+          <div class="ctool">Control de Vacaciones</div>
+          <p class="cdesc">Cuida el balance del equipo. Gestiona ausencias, descansos y planificación de días libres.</p>
+          <span class="cta">Entrar <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </a>
+        <a class="card" style="--c:#ff5c8a" href="https://pulse.mbc-latam.com/" data-char="pulse" data-umami-event="abrir-pulse">
+          <span class="ico">📊</span>
+          <div class="cname">Pulse <span class="role">· El Vigía</span></div>
+          <div class="ctool">Adopción &amp; Analítica</div>
+          <p class="cdesc">Toma el pulso del ecosistema: cuántas personas entran a cada herramienta, desde qué países y a qué horas.</p>
+          <span class="cta">Entrar <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </a>
+      </div>
+    </section>
 
     <!-- ══ Para consultores ══ -->
     <section class="group">
